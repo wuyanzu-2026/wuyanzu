@@ -76,6 +76,14 @@ def main():
     if OUTPUT.exists():
         shutil.rmtree(OUTPUT)
     OUTPUT.mkdir()
+    # Cloudflare may clone only the latest commit. Restore history so older
+    # version folders retain their real update timestamps.
+    shallow = subprocess.run(
+        ['git', 'rev-parse', '--is-shallow-repository'],
+        cwd=ROOT, capture_output=True, text=True, check=False,
+    )
+    if shallow.stdout.strip() == 'true':
+        subprocess.run(['git', 'fetch', '--unshallow', 'origin'], cwd=ROOT, check=True)
     projects = collect_projects()
     total_versions = sum(len(versions) for _, versions in projects)
     cards = '\n'.join(render_project(i, name, versions) for i, (name, versions) in enumerate(projects))
