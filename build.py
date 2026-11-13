@@ -3,6 +3,7 @@ from pathlib import Path
 from urllib.parse import quote
 import html
 import shutil
+import subprocess
 
 ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT / 'public'
@@ -15,6 +16,16 @@ def project_sort_key(path):
     return PROJECT_ORDER.get(path.name, len(PROJECT_ORDER)), path.name.casefold()
 
 
+def version_sort_key(path):
+    """Order versions by their latest Git update, not their folder spelling."""
+    result = subprocess.run(
+        ['git', 'log', '-1', '--format=%ct', '--', path.relative_to(ROOT).as_posix()],
+        cwd=ROOT, capture_output=True, text=True, check=False,
+    )
+    timestamp = result.stdout.strip()
+    return (int(timestamp) if timestamp.isdigit() else 0, path.name.casefold())
+
+
 def collect_projects():
     """Copy publishable versions, keeping folder names as URL segments."""
     projects = []
@@ -23,7 +34,7 @@ def collect_projects():
                 or folder.name.startswith('.') or folder.name in EXCLUDED):
             continue
         versions = []
-        for version in sorted(folder.iterdir(), key=lambda path: path.name, reverse=True):
+        for version in sorted(folder.iterdir(), key=version_sort_key, reverse=True):
             if (not version.is_dir() or version.is_symlink()
                     or version.name.startswith('.') or not (version / 'index.html').is_file()):
                 continue
