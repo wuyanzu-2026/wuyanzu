@@ -1,0 +1,358 @@
+{
+  "date": "2026-11-16",
+  "environment": "Codex内置浏览器；仅绑定127.0.0.1的只读静态预览；1280×720",
+  "checks": [
+    {
+      "test": "收益汇总100/120/20/120%",
+      "pass": true
+    },
+    {
+      "test": "两渠道明细无重复收益列",
+      "pass": true
+    },
+    {
+      "test": "修改保存失败保留表单及输入",
+      "pass": true
+    },
+    {
+      "test": "修改原记录后汇总重算",
+      "pass": true
+    },
+    {
+      "test": "同日期白包国家渠道重复拦截",
+      "pass": true
+    },
+    {
+      "test": "新增渠道后汇总130且收益仍120",
+      "pass": true
+    },
+    {
+      "test": "自建日展示300/活跃100/人均3",
+      "pass": true
+    },
+    {
+      "test": "区间活跃去重160/人均5.63",
+      "pass": true
+    },
+    {
+      "test": "TopOn日展示500/活跃100/人均5且无投放选择",
+      "pass": true
+    },
+    {
+      "test": "周内用户重算130非200",
+      "pass": true
+    },
+    {
+      "test": "单广告位不改变周期活跃分母",
+      "pass": true
+    },
+    {
+      "test": "至少保留一个广告位",
+      "pass": true
+    },
+    {
+      "test": "客服表格移除会话列及关闭入口",
+      "pass": true
+    },
+    {
+      "test": "客服上限拦截0",
+      "pass": true
+    },
+    {
+      "test": "修改上限不清零今日分配",
+      "pass": true
+    },
+    {
+      "test": "删除取消保留白包",
+      "pass": true
+    },
+    {
+      "test": "删除失败保留对象及重试",
+      "pass": true
+    },
+    {
+      "test": "删除成功白包移出列表",
+      "pass": true
+    },
+    {
+      "test": "删除白包不级联删除B包",
+      "pass": true
+    },
+    {
+      "test": "B包删除后移出当前列表",
+      "pass": true
+    },
+    {
+      "test": "删除后保留收益报表历史对象",
+      "pass": true
+    },
+    {
+      "test": "随机演示合格候选可命中且低价异地区为0",
+      "pass": true
+    },
+    {
+      "test": "只读禁用投放录入及同步",
+      "pass": true
+    },
+    {
+      "test": "查询失败状态与重试入口",
+      "pass": true
+    },
+    {
+      "test": "空数据状态",
+      "pass": true
+    },
+    {
+      "test": "加载状态",
+      "pass": true
+    },
+    {
+      "test": "20项规则反向定位均可达",
+      "pass": true
+    },
+    {
+      "test": "20项规则正向定位高亮",
+      "pass": true
+    },
+    {
+      "test": "零活跃且有展示时警告并显示—",
+      "pass": true
+    },
+    {
+      "test": "零展示有活跃时显示0.00",
+      "pass": true
+    },
+    {
+      "test": "缺失展示事件显示未就绪非0",
+      "pass": true
+    },
+    {
+      "test": "B包仅自建且跨白包日分母160",
+      "pass": true
+    },
+    {
+      "test": "B包切换白包范围同步重算",
+      "pass": true
+    },
+    {
+      "test": "收益同步失败保留上次有效金额",
+      "pass": true
+    },
+    {
+      "test": "重复收益同步不累加",
+      "pass": true
+    },
+    {
+      "test": "负消耗与非整数安装被原生校验拦截",
+      "pass": true
+    },
+    {
+      "test": "解除当前关联后仍保留B包历史白包统计范围",
+      "pass": true
+    }
+  ],
+  "ruleReverse": [
+    {
+      "id": "R-001",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-002",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-003",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-004",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-005",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-006",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-007",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-008",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-009",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-010",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-011",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-012",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-013",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-014",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-015",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-016",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-017",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-018",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-019",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    },
+    {
+      "id": "R-020",
+      "active": true,
+      "anchor": true,
+      "focus": true
+    }
+  ],
+  "ruleForward": [
+    {
+      "id": "R-001",
+      "pass": true
+    },
+    {
+      "id": "R-002",
+      "pass": true
+    },
+    {
+      "id": "R-003",
+      "pass": true
+    },
+    {
+      "id": "R-004",
+      "pass": true
+    },
+    {
+      "id": "R-005",
+      "pass": true
+    },
+    {
+      "id": "R-006",
+      "pass": true
+    },
+    {
+      "id": "R-007",
+      "pass": true
+    },
+    {
+      "id": "R-008",
+      "pass": true
+    },
+    {
+      "id": "R-009",
+      "pass": true
+    },
+    {
+      "id": "R-010",
+      "pass": true
+    },
+    {
+      "id": "R-011",
+      "pass": true
+    },
+    {
+      "id": "R-012",
+      "pass": true
+    },
+    {
+      "id": "R-013",
+      "pass": true
+    },
+    {
+      "id": "R-014",
+      "pass": true
+    },
+    {
+      "id": "R-015",
+      "pass": true
+    },
+    {
+      "id": "R-016",
+      "pass": true
+    },
+    {
+      "id": "R-017",
+      "pass": true
+    },
+    {
+      "id": "R-018",
+      "pass": true
+    },
+    {
+      "id": "R-019",
+      "pass": true
+    },
+    {
+      "id": "R-020",
+      "pass": true
+    }
+  ]
+}
