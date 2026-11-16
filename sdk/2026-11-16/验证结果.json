@@ -1,0 +1,264 @@
+{
+  "date": "2026-11-16",
+  "version": "v1.1",
+  "scope": "现网增量保真修正，业务范围不变",
+  "checks": [
+    {
+      "test": "白包14列与现网逐列同序",
+      "pass": true
+    },
+    {
+      "test": "白包原新增编辑广告数据入口保留",
+      "pass": true
+    },
+    {
+      "test": "白包保留Token事件Key频次商店状态及Logo",
+      "pass": true
+    },
+    {
+      "test": "B包全类型15列与现网逐列同序",
+      "pass": true
+    },
+    {
+      "test": "B包保留原新增编辑广告素材广告数据入口",
+      "pass": true
+    },
+    {
+      "test": "客服类型保留原安装付费隐藏条件",
+      "pass": true
+    },
+    {
+      "test": "拉活类型保留原建联隐藏条件",
+      "pass": true
+    },
+    {
+      "test": "B包编辑保留应用Logo类型标识包名商店国家状态",
+      "pass": true
+    },
+    {
+      "test": "原广告素材列表和新增编辑删除保留",
+      "pass": true
+    },
+    {
+      "test": "拉活原7统计列原序保留后追加活跃人均",
+      "pass": true
+    },
+    {
+      "test": "拉活保留原趋势指标开关与时日周月按钮",
+      "pass": true
+    },
+    {
+      "test": "客服原5统计列原序保留后追加活跃人均",
+      "pass": true
+    },
+    {
+      "test": "客服原展示点击建联趋势开关保留",
+      "pass": true
+    },
+    {
+      "test": "原趋势开关可切换",
+      "pass": true
+    },
+    {
+      "test": "客服仅移除会话列其余现网列完整同序",
+      "pass": true
+    },
+    {
+      "test": "客服返回新增搜索启停在班兜底编辑删除保留",
+      "pass": true
+    },
+    {
+      "test": "客服保留账号编辑和当日上限仅删同时接待上限",
+      "pass": true
+    },
+    {
+      "test": "修正后客服编辑保存且今日计数不清零",
+      "pass": true
+    },
+    {
+      "test": "原在班离班操作可用",
+      "pass": true
+    },
+    {
+      "test": "恢复旧字段后人均300除100仍为3",
+      "pass": true
+    },
+    {
+      "test": "TopOn新增分区与500除100等于5保留",
+      "pass": true
+    },
+    {
+      "test": "原周按钮可用且活跃重算为130",
+      "pass": true
+    },
+    {
+      "test": "保留字段后新增删除仍可取消",
+      "pass": true
+    },
+    {
+      "test": "增量删除失败保留原记录",
+      "pass": true
+    },
+    {
+      "test": "确认删除仅移出当前白包",
+      "pass": true
+    },
+    {
+      "test": "白包删除不连带删除原B包记录及字段",
+      "pass": true
+    },
+    {
+      "test": "现网增量修正不改变收益100/120/20/120%口径",
+      "pass": true
+    },
+    {
+      "test": "投放同维度重复拦截回归通过",
+      "pass": true
+    },
+    {
+      "test": "只读收益录入权限仍正确",
+      "pass": true
+    },
+    {
+      "test": "21条规则双向定位全部可达",
+      "pass": true
+    },
+    {
+      "test": "恢复的白包原编辑可保存且频次列保留",
+      "pass": true
+    },
+    {
+      "test": "开发文档明确增量原则逐页保留新增移除对照及T31",
+      "pass": true
+    },
+    {
+      "test": "现网七个导航入口保留且仅追加收益报表",
+      "pass": true
+    },
+    {
+      "test": "修正后宽表内滚动无全局溢出且页脚可见",
+      "pass": true
+    }
+  ],
+  "ruleBidirectional": [
+    {
+      "id": "R-001",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-002",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-003",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-004",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-005",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-006",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-007",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-008",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-009",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-010",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-011",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-012",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-013",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-014",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-015",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-016",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-017",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-018",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-019",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-020",
+      "reverse": true,
+      "forward": true
+    },
+    {
+      "id": "R-021",
+      "reverse": true,
+      "forward": true
+    }
+  ],
+  "layout": {
+    "footerVisible": true,
+    "nav": [
+      "▤数据概览",
+      "▣白包APP",
+      "◈B包管理",
+      "▥设备管理",
+      "◎Telegram 机器人",
+      "♙账户管理",
+      "◇角色管理",
+      "▤收益与投放报表"
+    ],
+    "noGlobalOverflow": true
+  }
+}
