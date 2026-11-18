@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telegram 客服机器人 PRD V1.0</title>
+<style>
+  :root {
+    --ink: #1c2430;
+    --muted: #5c6b7a;
+    --line: #e3e8ee;
+    --bg: #f4f6f8;
+    --card: #fff;
+    --accent: #0f6fde;
+    --ok: #0d7a45;
+    --ok-bg: #e8f6ee;
+    --warn: #8a5a00;
+    --warn-bg: #fff6e5;
+    --bad: #a12622;
+    --bad-bg: #fdecec;
+    --code: #f3f5f8;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--bg);
+    font: 15px/1.65 "PingFang SC", "Noto Sans SC", "Segoe UI", sans-serif;
+  }
+  header {
+    background: #102033;
+    color: #fff;
+    padding: 36px 24px 28px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  header h1 { margin: 0 0 8px; font-size: 28px; font-weight: 650; }
+  header p { margin: 0 0 12px; color: #c5d0dc; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 12px;
+    background: rgba(255,255,255,.12);
+    color: #dbe7f3;
+  }
+  main { padding: 24px 20px 72px; }
+  nav.toc, section {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin: 0 0 16px;
+  }
+  nav.toc ol { margin: 0; columns: 2; padding-left: 1.2em; }
+  nav.toc li { break-inside: avoid; margin: 4px 0; }
+  h2 { margin: 0 0 12px; font-size: 20px; }
+  h3 { margin: 18px 0 8px; font-size: 16px; }
+  h4 { margin: 14px 0 6px; font-size: 14px; color: #334155; }
+  p { margin: 8px 0; }
+  a { color: var(--accent); }
+  ul, ol { margin: 8px 0; padding-left: 1.3em; }
+  li { margin: 4px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 4px; font-size: 13.5px; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #f3f6fa; font-weight: 650; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; background: var(--code); padding: 1px 5px; border-radius: 4px; }
+  pre {
+    background: #0f2133;
+    color: #d7e6f5;
+    border-radius: 10px;
+    padding: 14px 16px;
+    overflow: auto;
+    font: 12px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .note { background: #eef5ff; border-radius: 8px; padding: 10px 12px; margin: 10px 0; }
+  footer {
+    max-width: 1080px;
+    margin: 0 auto;
+    color: var(--muted);
+    font-size: 13px;
+    padding: 0 20px 40px;
+  }
+  @media (max-width: 800px) { nav.toc ol { columns: 1; } }
+</style>
+</head>
+<body>
+<div style="max-width:1080px;margin:16px auto 0;padding:12px 16px;background:#fff6e5;border:1px solid #f1d19a;border-radius:8px;color:#8a5a00;">
+  <strong>已并入最终需求，不要单独按本文开发。</strong>
+  开发以 <a href="./客服广告建联需求文档.html">客服广告建联需求文档.html</a> V1.1 第 8 节为准。本文仅保留作历史附录。
+</div>
+<header>
+  <div class="wrap">
+    <h1>Telegram 客服机器人 PRD</h1>
+    <p>客服广告跳到机器人，由机器人分配客服账号，建联后回传中台，再 S2S 到白包 Adjust。</p>
+    <div class="meta">
+      <span class="chip">V1.0 已锁定</span>
+      <span class="chip">2026-10-27</span>
+      <span class="chip">机器人分号，中台归因</span>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+<nav class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li><a href="#1-产品概述">产品概述</a></li>
+    <li><a href="#2-目标用户与使用场景">目标用户与使用场景</a></li>
+    <li><a href="#3-核心用户动线">核心用户动线</a></li>
+    <li><a href="#4-功能清单">功能清单</a></li>
+    <li><a href="#5-功能详细描述">功能详细描述</a></li>
+    <li><a href="#6-文案规范">文案规范</a></li>
+    <li><a href="#7-非功能性需求">非功能性需求</a></li>
+    <li><a href="#8-范围与非目标">范围与非目标</a></li>
+    <li><a href="#9-验收标准">验收标准</a></li>
+    <li><a href="#10-实现分工">实现分工</a></li>
+    <li><a href="#11-待确认问题">待确认问题</a></li>
+  </ol>
+</nav>
+<p>版本：V1.0（已锁定）  </p>
+<p>日期：2026-10-27  </p>
+<p>基线：客服广告建联方案；现有 <code>web-ad</code> 中台、白包广告 SDK、白包 Adjust S2S  </p>
+<p>配套：中台只做点击归因和建联回传，不负责客服号分配</p>
+<section id='1-产品概述'><h2>1. 产品概述</h2>
+<p>这是客服建联链路里的 <strong>Telegram 机器人</strong>，不是广告中台，也不是白包 App。</p>
+<p>白包里的客服广告只跳到机器人。用户点 Start 后，由 <strong>机器人自己的号池</strong> 分配一个客服账号，把用户交给这个号。用户确认联系后，机器人把建联报给中台；中台用 <code>click_id</code> 找回 GAID 和白包，再 S2S 到白包 Adjust。</p>
+<p>机器人不知道 GAID，也不能自己打 Adjust。  </p>
+<p>中台不知道有哪些客服号，也不给机器人指定分给谁。</p>
+<h3>1.1 一句话定位</h3>
+<p>给广告进来的用户分配客服账号的 Telegram 机器人：接住 <code>click_id</code>，按号池分号，确认联系后把建联回给中台。</p>
+<h3>1.2 已锁定决策</h3>
+<table><thead><tr>
+<th>编号</th>
+<th>决策点</th>
+<th>锁定结果</th>
+</tr></thead><tbody>
+<tr>
+<td>D1</td>
+<td>广告跳转目标</td>
+<td>只跳 Telegram 机器人，不跳客服私人号</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>谁负责分号</td>
+<td>机器人。中台不做号池、不在线、不分配</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>分给什么</td>
+<td>真实客服 Telegram 账号。用户最终去和这个号聊天</td>
+</tr>
+<tr>
+<td>D4</td>
+<td>一个机器人管什么</td>
+<td>一个机器人实例绑定一个号池。不同国家用不同机器人，由广告素材跳转到对应 bot</td>
+</tr>
+<tr>
+<td>D5</td>
+<td>什么时候分号</td>
+<td>用户带着合法 <code>click_id</code> 点了 Start 之后。广告点击本身不分号</td>
+</tr>
+<tr>
+<td>D6</td>
+<td>怎么分</td>
+<td>熟客回原号；新客给当日已分配最少、其次当前会话最少的在班号；全离班也先分出去；满了走兜底号</td>
+</tr>
+<tr>
+<td>D7</td>
+<td>建联口径</td>
+<td>用户在机器人里点击「立即联系」，且机器人已发出该客服链接。同一 <code>click_id</code> 只报一次</td>
+</tr>
+<tr>
+<td>D8</td>
+<td>为什么不是「给客服发了第一句」</td>
+<td>用户离开机器人后，机器人看不到私人号里的对话，不能把第一句话当自动建联</td>
+</tr>
+<tr>
+<td>D9</td>
+<td>中台职责</td>
+<td>记录展示/点击/<code>click_id</code>；接收建联；按 <code>click_id</code> 找白包和 GAID；去重后 S2S</td>
+</tr>
+<tr>
+<td>D10</td>
+<td>Adjust</td>
+<td>只用白包 App Token + 建联 Event Token。机器人不碰 Adjust</td>
+</tr>
+<tr>
+<td>D11</td>
+<td>WhatsApp</td>
+<td>本次不做</td>
+</tr>
+<tr>
+<td>D12</td>
+<td>客服工作台</td>
+<td>本次不做。客服继续用自己的 Telegram 号接待</td>
+</tr>
+</tbody></table>
+<h3>1.3 产品形态</h3>
+<ul>
+<li>用户侧：Telegram Bot</li>
+<li>运营侧：机器人管理员命令（在 Telegram 里管号池）</li>
+<li>协作侧：调用中台建联接口</li>
+</ul>
+<p>不新增广告中台菜单来管客服号。</p>
+<h3>1.4 和现有系统的边界</h3>
+<table><thead><tr>
+<th>系统</th>
+<th>做</th>
+<th>不做</th>
+</tr></thead><tbody>
+<tr>
+<td>白包 SDK</td>
+<td>展示/点击上报；点击时生成 <code>click_id</code>；打开 <code>t.me/bot?start=click_id</code></td>
+<td>不报建联；不等中台返回再跳转</td>
+</tr>
+<tr>
+<td>广告中台</td>
+<td>下发客服素材和机器人 URL；收点击；收建联；S2S 白包 Adjust</td>
+<td>不管客服号名单，不分号</td>
+</tr>
+<tr>
+<td>本机器人</td>
+<td>解析 Start、号池、分号、发出客服链接、报建联</td>
+<td>不读 GAID，不打 Adjust</td>
+</tr>
+<tr>
+<td>客服账号</td>
+<td>用自己的 Telegram 号和用户聊天</td>
+<td>不负责归因</td>
+</tr>
+</tbody></table>
+</section><section id='2-目标用户与使用场景'><h2>2. 目标用户与使用场景</h2>
+<h3>2.1 用户画像</h3>
+<table><thead><tr>
+<th>角色</th>
+<th>核心诉求</th>
+</tr></thead><tbody>
+<tr>
+<td>广告用户</td>
+<td>点广告后能马上联系到能说话的客服，不要进错国家、不要重复加很多号</td>
+</tr>
+<tr>
+<td>客服</td>
+<td>新用户比较均匀进来；熟客还是找自己；号没被当日新用户打满</td>
+</tr>
+<tr>
+<td>客服主管 / 机器人管理员</td>
+<td>加减号、上下班、改上限、看谁满了、指定兜底号</td>
+</tr>
+<tr>
+<td>中台 / 买量</td>
+<td>能把这次建联认回白包买量，渠道按建联优化</td>
+</tr>
+</tbody></table>
+<h3>2.2 典型使用场景</h3>
+<ul>
+<li>场景 1：新加坡用户点白包客服广告，SDK 打开新加坡机器人。用户 Start 后分到一个新加坡客服号，点「立即联系」进入该号。中台把这次建联打到该白包 Adjust。</li>
+<li>场景 2：同一 Telegram 用户 3 天后再点广告进同一个机器人。不分新号，还是原来的客服。若这次又点了「立即联系」，机器人不再向中台重复报建联。</li>
+<li>场景 3：号池里两个在班号都到了当日上限，第三个号离班。机器人把人分给离班号，用户仍能点「立即联系」；会话等客服上班再回。建联照报。</li>
+<li>场景 4：用户点了广告，打开机器人但没按 Start。只算广告点击，机器人无记录，不分号，不报建联。</li>
+<li>场景 5：有人转发 <code>t.me/bot?start=click_id</code>。第一个点 Start 的人占用这次 <code>click_id</code>；后来的人仍可被分号接待，但报中台时标记不能归因。</li>
+<li>场景 6：用户直接搜到机器人，没有 <code>start</code> 参数。当自然客服：可分号接待，不报买量建联。</li>
+</ul>
+</section><section id='3-核心用户动线'><h2>3. 核心用户动线</h2>
+<p>主链路是广告用户进机器人并确认联系。异常分支：无 <code>click_id</code>、号池不足、中台上报失败。</p>
+<pre><code>flowchart TD
+  Click[用户点击白包客服广告] --&gt; Sdk[SDK 生成 click_id 并上报点击]
+  Sdk --&gt; Open["打开 t.me/bot?start=click_id"]
+  Open --&gt; Start{用户是否点 Start}
+  Start --&gt;|否| ClickOnly[只算广告点击]
+  Start --&gt;|是| Parse{start 参数是否合法}
+  Parse --&gt;|否/空| Organic[自然客服：可分号，不报建联]
+  Parse --&gt;|是| Sticky{该 Telegram 用户 7 天内是否已有原号}
+  Sticky --&gt;|原号仍启用| Reuse[回原客服号]
+  Sticky --&gt;|无或原号停用| Pick[按号池规则选号]
+  Pick --&gt; Assign[记录已分配]
+  Reuse --&gt; Assign
+  Assign --&gt; WaitTap[发出欢迎语和立即联系按钮]
+  WaitTap --&gt; Tap{用户是否点立即联系}
+  Tap --&gt;|否| AssignedOnly[只算已分配，不算建联]
+  Tap --&gt;|是| Dup{该 click_id 是否已建联}
+  Dup --&gt;|是| ShowLink[只再发客服链接，不再报中台]
+  Dup --&gt;|否| Report[POST 中台 /v1/cs/connect]
+  Report --&gt; Mid{中台能否用 click_id 找到点击}
+  Mid --&gt;|能且该白包该 GAID 首次| S2S[中台 S2S 白包 Adjust]
+  Mid --&gt;|重复或无法归因| KeepChat[接待继续，Adjust 不打或已打过]
+  Report --&gt; ShowLink
+  Pick --&gt;|号池全不可用| Fallback[分给兜底号，并告警管理员]
+  Fallback --&gt; Assign</code></pre>
+</section><section id='4-功能清单'><h2>4. 功能清单</h2>
+<ul>
+<li>🔴 核心：接收 <code>/start click_id</code></li>
+<li>🔴 核心：客服账号与号池管理</li>
+<li>🔴 核心：分配算法</li>
+<li>🔴 核心：把用户交给被分配的客服账号</li>
+<li>🔴 核心：建联上报中台</li>
+<li>🔴 核心：粘性、占用与去重</li>
+<li>🟡 重要：开口上报（Start 事件，供漏斗，不打 Adjust）</li>
+<li>🟡 重要：号池不足 / 上报失败告警</li>
+<li>🟡 重要：欢迎语按用户 Telegram language_code 自动切换，未覆盖用英文。开发以主需求文档 8.2.1 为准</li>
+<li>⚪ 未来规划：用户不离开机器人的客服工作台</li>
+<li>⚪ 未来规划：独立 Web 管理后台</li>
+<li>⚪ 未来规划：WhatsApp</li>
+</ul>
+<h3>4.1 关键界面线框图</h3>
+<p>用户侧是 Telegram 对话，不是网页。最关键的一屏是 Start 之后的分配结果：</p>
+<pre><code>+--------------------------------------+
+| your_cs_bot                    Bot   |
++--------------------------------------+
+| 系统：/start cK8x2mQ9pL0aB3nR7tYw4  |
+|                                      |
+| 机器人：                             |
+| 已为你分配专属客服。                 |
+| 请点击下方按钮开始咨询。             |
+|                                      |
+| +------------------------------+     |
+| |        立即联系              |     |
+| +------------------------------+     |
++--------------------------------------+
+
+点击后：
+
+| 机器人：                             |
+| 请点击打开客服对话：                 |
+| https://t.me/cs_sg_02                |
++--------------------------------------+</code></pre>
+<p>管理员侧最关键的一屏是号池列表：</p>
+<pre><code>+--------------------------------------+
+| /cs_list                             |
++--------------------------------------+
+| 号池：新加坡默认                     |
+| 兜底：@cs_sg_backup                  |
+|                                      |
+| @cs_sg_01  在班  启用  38/40  会话12 |
+| @cs_sg_02  在班  启用  21/40  会话 8 |
+| @cs_sg_03  离班  启用  10/40  会话 3 |
+|                                      |
+| 今日已分配 69  剩余名额 51           |
++--------------------------------------+</code></pre>
+</section><section id='5-功能详细描述'><h2>5. 功能详细描述</h2>
+<h3>5.1 接收 <code>/start click_id</code></h3>
+<ul>
+<li>功能描述：广告 SDK 打开 <code>https://t.me/&lt;bot&gt;?start=&lt;click_id&gt;</code>。用户点 Start 后，机器人解析 payload，建立本次会话。</li>
+<li>触发条件：用户向本机器人发送 <code>/start</code>，或点击带 <code>start</code> 的深度链接。</li>
+</ul>
+<h4>交互细节</h4>
+<ul>
+<li>操作反馈：收到 Start 后 2 秒内回复欢迎/分配结果，不要让用户空等。</li>
+<li>危险操作确认：无。</li>
+<li>空状态引导：没有 <code>click_id</code> 时回复自然客服欢迎语，不提广告、不提失败。</li>
+<li>失败引导：<code>click_id</code> 格式非法时，按没有 <code>click_id</code> 处理，不要把校验细节暴露给用户。</li>
+</ul>
+<h4>状态清单</h4>
+<table><thead><tr>
+<th>状态</th>
+<th>表现</th>
+<th>说明</th>
+</tr></thead><tbody>
+<tr>
+<td>默认</td>
+<td>等待用户 Start</td>
+<td>机器人不主动找用户</td>
+</tr>
+<tr>
+<td>加载中</td>
+<td>可先回「正在为你分配客服…」</td>
+<td>选号或写库超过 1 秒时才出</td>
+</tr>
+<tr>
+<td>成功</td>
+<td>欢迎语 + 「立即联系」</td>
+<td>已完成分配</td>
+</tr>
+<tr>
+<td>失败</td>
+<td>仍给出兜底号或「客服稍后接入」</td>
+<td>用户侧不能是死命令</td>
+</tr>
+<tr>
+<td>禁用</td>
+<td>机器人停用</td>
+<td>Telegram 侧不可用，广告不应再下发该跳转</td>
+</tr>
+<tr>
+<td>空状态</td>
+<td>无 start 参数</td>
+<td>自然客服流程</td>
+</tr>
+</tbody></table>
+<h4>边界条件</h4>
+<ul>
+<li>空内容：<code>/start</code> 无参数 → 自然客服。</li>
+<li>超长：start payload 超过 64 字符或含非法字符 → 当非法，走自然客服。</li>
+<li>网络异常：机器人自己的库失败 → 用兜底号，并告警。</li>
+<li>无权限：普通用户不能执行管理员命令。</li>
+<li>并发：同一 Telegram 用户连续多次 <code>/start</code>，以最后一次合法 <code>click_id</code> 更新本次入口，但客服号仍走粘性，不反复换号。</li>
+<li>格式不符：只接受 <code>A-Za-z0-9_-</code>，长度 16～24。</li>
+</ul>
+<h4>数据规范</h4>
+<table><thead><tr>
+<th>字段名</th>
+<th>类型</th>
+<th>长度</th>
+<th>必填</th>
+<th>默认值</th>
+<th>校验规则</th>
+</tr></thead><tbody>
+<tr>
+<td>click_id</td>
+<td>string</td>
+<td>16-24</td>
+<td>广告进入时必填</td>
+<td>空</td>
+<td><code>^[A-Za-z0-9_-]{16,24}$</code></td>
+</tr>
+<tr>
+<td>telegram_user_id</td>
+<td>int64</td>
+<td>-</td>
+<td>是</td>
+<td>Telegram 下发</td>
+<td>大于 0</td>
+</tr>
+<tr>
+<td>telegram_username</td>
+<td>string</td>
+<td>64</td>
+<td>否</td>
+<td>空</td>
+<td>可空，用户可能无用户名</td>
+</tr>
+<tr>
+<td>language_code</td>
+<td>string</td>
+<td>16</td>
+<td>否</td>
+<td>空</td>
+<td>只作欢迎语参考，不分号</td>
+</tr>
+<tr>
+<td>start_time</td>
+<td>datetime</td>
+<td>-</td>
+<td>是</td>
+<td>当前时间</td>
+<td>机器人服务端时间</td>
+</tr>
+</tbody></table>
+<p>合法 <code>click_id</code> 由 SDK 生成，机器人不改写、不解码出 GAID。  </p>
+<p>机器人不得要求用户手动输入 GAID、包名或广告 ID。</p>
+<h3>5.2 客服账号与号池管理</h3>
+<ul>
+<li>功能描述：每个机器人实例内维护自己的客服号名单、上限、在班状态和兜底号。运营用管理员命令维护，不在广告中台配置。</li>
+<li>触发条件：Telegram 用户 ID 在管理员白名单内，发送管理命令。</li>
+</ul>
+<h4>交互细节</h4>
+<ul>
+<li>操作反馈：命令成功后回当前号的完整状态；失败回原因，不静默。</li>
+<li>危险操作确认：停用号、删除号、更换兜底号，要二次确认（再发一遍带 <code>confirm</code> 的命令，或机器人问「确认停用？是/否」）。</li>
+<li>空状态引导：号池一个号都没有时，管理员执行 <code>/cs_list</code> 提示「还没有客服号，先 /cs_add」。此时普通用户 Start，走「客服稍后接入」并告警。</li>
+<li>失败引导：加号时用户名无效、重复、不是管理员，明确说原因。</li>
+</ul>
+<h4>管理员命令</h4>
+<table><thead><tr>
+<th>命令</th>
+<th>作用</th>
+<th>示例</th>
+</tr></thead><tbody>
+<tr>
+<td><code>/cs_add @username 40 30</code></td>
+<td>新增客服号，参数为当日新用户上限、同时接待上限</td>
+<td><code>/cs_add @cs_sg_02 40 30</code></td>
+</tr>
+<tr>
+<td><code>/cs_on @username</code></td>
+<td>设为在班</td>
+<td><code>/cs_on @cs_sg_02</code></td>
+</tr>
+<tr>
+<td><code>/cs_off @username</code></td>
+<td>设为离班</td>
+<td><code>/cs_off @cs_sg_02</code></td>
+</tr>
+<tr>
+<td><code>/cs_enable @username</code></td>
+<td>启用</td>
+<td><code>/cs_enable @cs_sg_02</code></td>
+</tr>
+<tr>
+<td><code>/cs_disable @username</code></td>
+<td>停用，需确认。已绑该号的熟客下次重分</td>
+<td><code>/cs_disable @cs_sg_02</code></td>
+</tr>
+<tr>
+<td><code>/cs_cap @username 40 30</code></td>
+<td>改当日上限和同时接待上限</td>
+<td><code>/cs_cap @cs_sg_02 50 30</code></td>
+</tr>
+<tr>
+<td><code>/cs_fallback @username</code></td>
+<td>设为兜底号，需确认</td>
+<td><code>/cs_fallback @cs_sg_backup</code></td>
+</tr>
+<tr>
+<td><code>/cs_list</code></td>
+<td>查看号池</td>
+<td><code>/cs_list</code></td>
+</tr>
+<tr>
+<td><code>/cs_admins</code></td>
+<td>查看管理员，仅超级管理员</td>
+<td><code>/cs_admins</code></td>
+</tr>
+</tbody></table>
+<p>用户名统一存不含 <code>@</code> 的 Telegram username，大小写不敏感。  </p>
+<p>一个号只能属于当前这个机器人实例，不在多个机器人之间共享计数。</p>
+<h4>状态清单</h4>
+<table><thead><tr>
+<th>状态</th>
+<th>表现</th>
+<th>说明</th>
+</tr></thead><tbody>
+<tr>
+<td>默认</td>
+<td>新号默认启用、离班</td>
+<td>加完后要手动 <code>/cs_on</code> 才进入在班池</td>
+</tr>
+<tr>
+<td>加载中</td>
+<td>无独立页面</td>
+<td>命令瞬时返回</td>
+</tr>
+<tr>
+<td>成功</td>
+<td>回列表或单号状态</td>
+<td>含今日已分配、剩余名额</td>
+</tr>
+<tr>
+<td>失败</td>
+<td>回错误原因</td>
+<td>不改数据</td>
+</tr>
+<tr>
+<td>禁用</td>
+<td><code>disabled</code></td>
+<td>不再被新分；粘性失效</td>
+</tr>
+<tr>
+<td>空状态</td>
+<td>无账号</td>
+<td><code>/cs_list</code> 提示先加号</td>
+</tr>
+</tbody></table>
+<h4>边界条件</h4>
+<ul>
+<li>空内容：命令缺参数 → 回用法。</li>
+<li>超长：username 超过 32 字符 → 拒绝。</li>
+<li>网络异常：Telegram <code>getChat</code> 校验用户名失败 → 可先按字符串入库，标记「未校验」，[待补充] 是否必须校验号存在。</li>
+<li>无权限：非管理员发这些命令 → 忽略或回「无权限」，不要泄露号池。</li>
+<li>并发：两个管理员同时改同一号，后写覆盖前写，以数据库最后一次为准。</li>
+<li>格式不符：上限不是正整数、同时接待上限小于 1 → 拒绝。</li>
+</ul>
+<h4>数据规范</h4>
+<table><thead><tr>
+<th>字段名</th>
+<th>类型</th>
+<th>长度</th>
+<th>必填</th>
+<th>默认值</th>
+<th>校验规则</th>
+</tr></thead><tbody>
+<tr>
+<td>cs_account</td>
+<td>string</td>
+<td>32</td>
+<td>是</td>
+<td>无</td>
+<td>Telegram username，唯一</td>
+</tr>
+<tr>
+<td>daily_cap</td>
+<td>int</td>
+<td>-</td>
+<td>是</td>
+<td>40</td>
+<td>1～999</td>
+</tr>
+<tr>
+<td>concurrent_cap</td>
+<td>int</td>
+<td>-</td>
+<td>是</td>
+<td>30</td>
+<td>1～999</td>
+</tr>
+<tr>
+<td>today_assigned</td>
+<td>int</td>
+<td>-</td>
+<td>是</td>
+<td>0</td>
+<td>每日按配置时区零点清零</td>
+</tr>
+<tr>
+<td>open_chats</td>
+<td>int</td>
+<td>-</td>
+<td>是</td>
+<td>0</td>
+<td>已分配未关闭的会话数</td>
+</tr>
+<tr>
+<td>online</td>
+<td>bool</td>
+<td>-</td>
+<td>是</td>
+<td>false</td>
+<td>在班/离班</td>
+</tr>
+<tr>
+<td>enabled</td>
+<td>bool</td>
+<td>-</td>
+<td>是</td>
+<td>true</td>
+<td>启用/停用</td>
+</tr>
+<tr>
+<td>is_fallback</td>
+<td>bool</td>
+<td>-</td>
+<td>是</td>
+<td>false</td>
+<td>同一实例只能有一个兜底号</td>
+</tr>
+<tr>
+<td>last_assigned_at</td>
+<td>datetime</td>
+<td>-</td>
+<td>否</td>
+<td>空</td>
+<td>用于并列时挑最久没分到的</td>
+</tr>
+</tbody></table>
+<p>当日上限清零时区：[待补充]，未定前按 <code>Asia/Singapore</code>。  </p>
+<p>默认 40/30 只是新建号时的缺省，运营可改。</p>
+<h3>5.3 分配算法</h3>
+<ul>
+<li>功能描述：Start 成功后，在本机器人号池里选出一个客服账号。中台不参与这次选择。</li>
+<li>触发条件：用户 Start 进入分配；或原号被停用后需要重分。</li>
+</ul>
+<h4>规则，按顺序执行，不得跳步</h4>
+<ol>
+<li><strong>粘性</strong>  </li>
+</ol>
+<p>   该 <code>telegram_user_id</code> 在 7 天内已分配过账号 A，且 A 仍启用 → 直接回 A。  </p>
+<p>   不看 A 是否在班、是否已到上限。熟客优先于负载。</p>
+<ol>
+<li><strong>过滤可分新客的号</strong>  </li>
+</ol>
+<p>   <code>enabled=true</code> 且 <code>today_assigned &lt; daily_cap</code> 且 <code>open_chats &lt; concurrent_cap</code>。</p>
+<ol>
+<li><strong>在班优先</strong>  </li>
+</ol>
+<p>   过滤结果里如果有 <code>online=true</code> 的号，只在这些号里选。  </p>
+<p>   如果全是离班，不要把用户挂起，改为在离班号里选，会话进该号队列。</p>
+<ol>
+<li><strong>负载</strong>  </li>
+</ol>
+<p>   先比 <code>today_assigned</code> 升序，再比 <code>open_chats</code> 升序，再比 <code>last_assigned_at</code> 升序（空最前）。</p>
+<ol>
+<li><strong>放宽</strong>  </li>
+</ol>
+<p>   若第 2 步无人：先放开同时接待上限，再放开当日上限，再只用兜底号。  </p>
+<p>   每放宽一层记一条管理员告警。</p>
+<ol>
+<li><strong>仍无人</strong>  </li>
+</ol>
+<p>   回复「客服正在接入，请稍等」，创建 <code>pending</code> 会话，告警管理员。用户稍后可再次 Start。</p>
+<h4>交互细节</h4>
+<ul>
+<li>操作反馈：用户只看到欢迎和「立即联系」，看不到为什么分到这个号、今天排第几。</li>
+<li>危险操作确认：无。</li>
+<li>空状态引导：号池为空见上。</li>
+<li>失败引导：pending 时允许用户再次 Start 重试。</li>
+</ul>
+<h4>状态清单</h4>
+<table><thead><tr>
+<th>状态</th>
+<th>表现</th>
+<th>说明</th>
+</tr></thead><tbody>
+<tr>
+<td>默认</td>
+<td>待分配</td>
+<td>Start 后立刻进入算法</td>
+</tr>
+<tr>
+<td>加载中</td>
+<td>「正在为你分配客服…」</td>
+<td>可选</td>
+</tr>
+<tr>
+<td>成功</td>
+<td>已绑定 cs_account</td>
+<td><code>today_assigned+1</code>，<code>open_chats+1</code></td>
+</tr>
+<tr>
+<td>失败</td>
+<td>pending</td>
+<td>不计分配</td>
+</tr>
+<tr>
+<td>禁用</td>
+<td>原号停用触发重分</td>
+<td>走新客规则，不沿用停用号</td>
+</tr>
+<tr>
+<td>空状态</td>
+<td>无号</td>
+<td>pending + 告警</td>
+</tr>
+</tbody></table>
+<h4>边界条件</h4>
+<ul>
+<li>空内容：号池为空 → pending。</li>
+<li>超长：无。</li>
+<li>网络异常：读号池失败 → 兜底号；无兜底号 → pending。</li>
+<li>无权限：无。</li>
+<li>并发：两个新用户同时分到同一号时，用数据库条件更新：<code>today_assigned &lt; daily_cap</code> 才成功；失败则重跑算法，避免超发。</li>
+<li>格式不符：无。</li>
+</ul>
+<p>点广告、未 Start，<strong>不得</strong>占用任何号的 <code>today_assigned</code>。</p>
+<p>自然客服（无合法 <code>click_id</code>）也走同一套分号，但后续不调中台建联接口。</p>
+<h3>5.4 把用户交给被分配的客服账号</h3>
+<ul>
+<li>功能描述：分配完成后，用户仍先停在机器人对话里。用户点击「立即联系」后，机器人再发出该客服号的 Telegram 链接。</li>
+<li>触发条件：会话状态为已分配，且尚未发出或用户再次索取链接。</li>
+</ul>
+<h4>交互细节</h4>
+<ul>
+<li>操作反馈：  </li>
+</ul>
+<ol>
+<li>Start 成功后发文案 + 单按钮「立即联系」。按钮类型必须是 <strong>callback</strong>，不能是直接 <code>url</code> 按钮，否则机器人收不到点击，无法报建联。  </li>
+<li>用户点按钮后，先向中台报建联（见 5.5），再发客服链接 <code>https://t.me/&lt;cs_account&gt;</code>。  </li>
+<li>按钮点击后改为不可重复提交的已处理态，可再给一条普通链接方便打开。</li>
+</ol>
+<ul>
+<li>危险操作确认：无。</li>
+<li>空状态引导：若链接发出后用户说「打不开」，识别简单关键词如「打不开 / 没反应 / link」，再发一次同样链接，不重新分号，不重复报建联。</li>
+<li>失败引导：被分配号停用后，提示「正在为你更换客服」，重分后再出新按钮。</li>
+</ul>
+<h4>状态清单</h4>
+<table><thead><tr>
+<th>状态</th>
+<th>表现</th>
+<th>说明</th>
+</tr></thead><tbody>
+<tr>
+<td>默认</td>
+<td>已分配，按钮未点</td>
+<td>不算建联</td>
+</tr>
+<tr>
+<td>加载中</td>
+<td>按钮短暂 loading</td>
+<td>callback 处理中</td>
+</tr>
+<tr>
+<td>成功</td>
+<td>发出 <code>t.me/客服号</code></td>
+<td>建联已尝试上报</td>
+</tr>
+<tr>
+<td>失败</td>
+<td>「请稍后重试」+ 保留按钮</td>
+<td>上报失败也要把链接发给用户，避免人被卡住</td>
+</tr>
+<tr>
+<td>禁用</td>
+<td>原号停用</td>
+<td>重分</td>
+</tr>
+<tr>
+<td>空状态</td>
+<td>无</td>
+<td>无</td>
+</tr>
+</tbody></table>
+<h4>边界条件</h4>
+<ul>
+<li>空内容：客服 username 丢失 → 重分或兜底。</li>
+<li>超长：无。</li>
+<li>网络异常：中台上报失败 → <strong>仍然发客服链接</strong>，本地记 <code>report_failed</code>，后台重试上报。人比归因优先。</li>
+<li>无权限：无。</li>
+<li>并发：同一用户连点按钮，只处理第一次，后续只补发链接。</li>
+<li>格式不符：客服账号必须能拼出 <code>https://t.me/{username}</code>。</li>
+</ul>
+<p>预填进客服对话框的文本：[待补充]。未定前不预填 <code>click_id</code>，避免用户看到一串追踪码。若后续要给客服看来源，另做客服侧备注，不要写在用户可见输入框里。</p>
+<h3>5.5 建联上报中台</h3>
+<ul>
+<li>功能描述：用户点击「立即联系」后，机器人调用中台 <code>POST /v1/cs/connect</code>。中台负责找回点击、去重、S2S。机器人只保证「有合法 click_id 的确认联系只报一次」。</li>
+<li>触发条件：callback「立即联系」；该会话有合法 <code>click_id</code>；该 <code>click_id</code> 本地尚未标记 <code>connected</code>。</li>
+</ul>
+<p>无合法 <code>click_id</code> 的自然客服 <strong>禁止</strong> 调用该接口。</p>
+<h4>交互细节</h4>
+<ul>
+<li>操作反馈：上报是后台动作，用户只看到客服链接。不要对用户说「已上报 / 归因成功」。</li>
+<li>危险操作确认：无。</li>
+<li>空状态引导：无。</li>
+<li>失败引导：失败不打扰用户；管理员告警；本地重试。</li>
+</ul>
+<h4>状态清单</h4>
+<table><thead><tr>
+<th>状态</th>
+<th>表现</th>
+<th>说明</th>
+</tr></thead><tbody>
+<tr>
+<td>默认</td>
+<td>未上报</td>
+<td>已分配未点按钮</td>
+</tr>
+<tr>
+<td>加载中</td>
+<td>正在 POST</td>
+<td>用户已点按钮</td>
+</tr>
+<tr>
+<td>成功</td>
+<td><code>connected</code> + 中台返回成功</td>
+<td>中台是否归因由返回值说明</td>
+</tr>
+<tr>
+<td>失败</td>
+<td><code>report_failed</code></td>
+<td>发链接不受影响</td>
+</tr>
+<tr>
+<td>禁用</td>
+<td>无 click_id</td>
+<td>不上报</td>
+</tr>
+<tr>
+<td>空状态</td>
+<td>无</td>
+<td>无</td>
+</tr>
+</tbody></table>
+<h4>边界条件</h4>
+<ul>
+<li>空内容：缺 click_id → 不上报。</li>
+<li>超长：字段超长截断或拒绝，见下表。</li>
+<li>网络异常：超时 3 秒视为失败，最多再试 3 次，间隔 5s / 30s / 5min。三次后停，等人工或下次进程补偿。</li>
+<li>无权限：签名错误会被中台拒绝，必须告警，说明密钥错了，不要对用户暴露。</li>
+<li>并发：以 <code>click_id</code> 本地唯一键保证只成功发出一次业务请求；重试用同一请求幂等。</li>
+<li>格式不符：中台返回 4xx，除 409 已建联外，不要盲重试改字段。</li>
+</ul>
+<h4>请求规范</h4>
+<p><code>POST {中台域名}/v1/cs/connect</code></p>
+<p>Header：</p>
+<table><thead><tr>
+<th>字段名</th>
+<th>类型</th>
+<th>长度</th>
+<th>必填</th>
+<th>默认值</th>
+<th>校验规则</th>
+</tr></thead><tbody>
+<tr>
+<td>X-Cs-Timestamp</td>
+<td>string</td>
+<td>16</td>
+<td>是</td>
+<td>当前 unix 秒</td>
+<td>与中台时间差不超过 300 秒</td>
+</tr>
+<tr>
+<td>X-Cs-Sign</td>
+<td>string</td>
+<td>64</td>
+<td>是</td>
+<td>HMAC-SHA256</td>
+<td><code>hex(hmac_sha256(secret, timestamp + "." + body))</code></td>
+</tr>
+<tr>
+<td>Content-Type</td>
+<td>string</td>
+<td>-</td>
+<td>是</td>
+<td>application/json</td>
+<td>JSON</td>
+</tr>
+</tbody></table>
+<p>Body：</p>
+<table><thead><tr>
+<th>字段名</th>
+<th>类型</th>
+<th>长度</th>
+<th>必填</th>
+<th>默认值</th>
+<th>校验规则</th>
+</tr></thead><tbody>
+<tr>
+<td>click_id</td>
+<td>string</td>
+<td>16-24</td>
+<td>是</td>
+<td>无</td>
+<td>与 Start 收到的一致</td>
+</tr>
+<tr>
+<td>telegram_user_id</td>
+<td>string</td>
+<td>32</td>
+<td>是</td>
+<td>无</td>
+<td>数字字符串</td>
+</tr>
+<tr>
+<td>telegram_username</td>
+<td>string</td>
+<td>64</td>
+<td>否</td>
+<td>空</td>
+<td>可空</td>
+</tr>
+<tr>
+<td>cs_account</td>
+<td>string</td>
+<td>32</td>
+<td>是</td>
+<td>无</td>
+<td>不含 <code>@</code></td>
+</tr>
+<tr>
+<td>connect_time</td>
+<td>int</td>
+<td>-</td>
+<td>是</td>
+<td>按钮点击时间</td>
+<td>unix 秒</td>
+</tr>
+<tr>
+<td>event</td>
+<td>string</td>
+<td>16</td>
+<td>是</td>
+<td>connect</td>
+<td>固定 <code>connect</code></td>
+</tr>
+</tbody></table>
+<p>禁止上传：GAID、广告 ID、白包 app_id、聊天内容、手机号。  </p>
+<p>机器人没有这些值，也不准向用户索取后转发。</p>
+<p>中台返回：</p>
+<table><thead><tr>
+<th>字段名</th>
+<th>含义</th>
+</tr></thead><tbody>
+<tr>
+<td>code=200 且 attributed=true</td>
+<td>已对上点击，中台按自身规则决定是否 S2S</td>
+</tr>
+<tr>
+<td>code=200 且 attributed=false</td>
+<td>点击对不上或过期，当自然建联，机器人仍接待</td>
+</tr>
+<tr>
+<td>code=200 且 duplicate=true</td>
+<td>该 click_id 或该白包该 GAID 已经建联，不再 S2S</td>
+</tr>
+<tr>
+<td>409</td>
+<td>与 duplicate 同等处理</td>
+</tr>
+<tr>
+<td>5xx / 超时</td>
+<td>机器人重试</td>
+</tr>
+</tbody></table>
+<p>中台域名、签名密钥：[待补充]。  </p>
+<p>密钥只放机器人服务端和中台，不进 BotFather 简介，不进客户端。</p>
+<h4>中台侧必须同时具备的能力</h4>
+<p>本机器人能工作的前提，不在机器人代码里实现，但必须同期交付：</p>
+<ol>
+<li>SDK 点击上报带 <code>click_id</code>，并立刻打开 <code>t.me/&lt;bot&gt;?start=&lt;click_id&gt;</code>。</li>
+<li>中台 <code>ad_log</code> 能按 <code>click_id</code> 找到 <code>gaid、app_id、ad_id</code>。</li>
+<li>中台建联去重：同一 <code>click_id</code> 一次；同一白包 + 同一 GAID 只 S2S 一次。</li>
+<li>白包配置建联 Event Token。</li>
+<li>点击日志晚于机器人回调时，中台先收 pending，点击到达后再补归因。pending 保留 48 小时。</li>
+</ol>
+<h3>5.6 粘性、占用与去重</h3>
+<ul>
+<li>功能描述：防止同一人被反复换号，防止同一广告点击被多个 Telegram 用户占用，防止 Adjust 被打多次。</li>
+<li>触发条件：每次 Start、每次「立即联系」。</li>
+</ul>
+<h4>规则</h4>
+<table><thead><tr>
+<th>规则</th>
+<th>处理</th>
+</tr></thead><tbody>
+<tr>
+<td>同一 telegram_user_id，7 天内</td>
+<td>回原客服号</td>
+</tr>
+<tr>
+<td>同一 click_id，第一个 Start 的 telegram_user_id</td>
+<td>占用该 click_id</td>
+</tr>
+<tr>
+<td>同一 click_id，其他 Telegram 用户再 Start</td>
+<td>可分号接待，标记 <code>attributed=false</code>，点「立即联系」也不调中台，或调了也由中台拒绝归因</td>
+</tr>
+<tr>
+<td>同一 click_id 多次「立即联系」</td>
+<td>只第一次报中台</td>
+</tr>
+<tr>
+<td>click_id 超过 7 天</td>
+<td>当过期。可接待，不报买量建联</td>
+</tr>
+<tr>
+<td>原客服号被停用</td>
+<td>粘性取消，按新客重分</td>
+</tr>
+</tbody></table>
+<h4>交互细节</h4>
+<ul>
+<li>操作反馈：用户无感知。</li>
+<li>危险操作确认：无。</li>
+<li>空状态引导：无。</li>
+<li>失败引导：无。</li>
+</ul>
+<h4>状态清单</h4>
+<table><thead><tr>
+<th>状态</th>
+<th>表现</th>
+<th>说明</th>
+</tr></thead><tbody>
+<tr>
+<td>默认</td>
+<td>新会话</td>
+<td>无粘性</td>
+</tr>
+<tr>
+<td>加载中</td>
+<td>无</td>
+<td>无</td>
+</tr>
+<tr>
+<td>成功</td>
+<td>绑定 user↔号、click_id↔user</td>
+<td>写本地表</td>
+</tr>
+<tr>
+<td>失败</td>
+<td>写库失败则退兜底</td>
+<td>告警</td>
+</tr>
+<tr>
+<td>禁用</td>
+<td>号停用</td>
+<td>清粘性</td>
+</tr>
+<tr>
+<td>空状态</td>
+<td>无历史</td>
+<td>走新客</td>
+</tr>
+</tbody></table>
+<h4>边界条件</h4>
+<ul>
+<li>空内容：无历史 → 新客。</li>
+<li>超长：无。</li>
+<li>网络异常：粘性表读失败 → 当新客分号，可能换号，需告警。</li>
+<li>无权限：无。</li>
+<li>并发：<code>click_id</code> 占用用唯一索引，第二个写入失败即视为被占用。</li>
+<li>格式不符：无。</li>
+</ul>
+<h4>数据规范</h4>
+<table><thead><tr>
+<th>字段名</th>
+<th>类型</th>
+<th>长度</th>
+<th>必填</th>
+<th>默认值</th>
+<th>校验规则</th>
+</tr></thead><tbody>
+<tr>
+<td>telegram_user_id</td>
+<td>int64</td>
+<td>-</td>
+<td>是</td>
+<td>无</td>
+<td>粘性主键</td>
+</tr>
+<tr>
+<td>cs_account</td>
+<td>string</td>
+<td>32</td>
+<td>是</td>
+<td>无</td>
+<td>当前绑定号</td>
+</tr>
+<tr>
+<td>click_id</td>
+<td>string</td>
+<td>24</td>
+<td>否</td>
+<td>空</td>
+<td>有则唯一占用</td>
+</tr>
+<tr>
+<td>assigned_at</td>
+<td>datetime</td>
+<td>-</td>
+<td>是</td>
+<td>当前时间</td>
+<td>粘性从该时间起算 7 天</td>
+</tr>
+<tr>
+<td>connected_at</td>
+<td>datetime</td>
+<td>-</td>
+<td>否</td>
+<td>空</td>
+<td>第一次点「立即联系」</td>
+</tr>
+<tr>
+<td>attributed</td>
+<td>bool</td>
+<td>-</td>
+<td>是</td>
+<td>false</td>
+<td>仅合法 click_id 且本用户是占用者时为 true</td>
+</tr>
+<tr>
+<td>report_status</td>
+<td>string</td>
+<td>16</td>
+<td>是</td>
+<td>none</td>
+<td>none / pending / success / failed</td>
+</tr>
+</tbody></table>
+<h3>5.7 开口上报</h3>
+<ul>
+<li>功能描述：用户 Start 成功后，机器人可向中台报 <code>event=start</code>，只给漏斗看「点了广告但没进机器人 / 进了但没点立即联系」。不触发 Adjust。</li>
+<li>触发条件：合法 <code>click_id</code> 的 Start 成功分配后。自然客服不上报。</li>
+</ul>
+<p>本项为 🟡。第一期若中台接口未就绪，可只写机器人本地日志，不阻塞分号。</p>
+<h4>数据规范</h4>
+<p>与建联接口相同路径或 <code>POST /v1/cs/start</code>，body 的 <code>event</code> 为 <code>start</code>，无 <code>connect_time</code>，改为 <code>start_time</code>。[待补充] 中台是否拆两个 URL。</p>
+<h3>5.8 告警</h3>
+<ul>
+<li>功能描述：号池和上报异常打到管理员 Telegram，不打到用户。</li>
+<li>触发条件：号池放宽规则、无号可分、建联连续失败、签名被拒、当日剩余名额低于 20%。</li>
+</ul>
+<p>文案给管理员，例如：「新加坡号池剩余名额 8，请加号或提高上限。」</p>
+</section><section id='6-文案规范'><h2>6. 文案规范</h2>
+<h3>6.1 产品整体文案风格</h3>
+<p>简洁直接。用户侧像人工客服入口，不提 SDK、中台、Adjust、click_id。管理员侧短命令、短状态。</p>
+<h3>6.2 面向终端用户</h3>
+<p>语言按用户 Telegram language_code 自动切换，不按实例国家写死。[待补充] 各语言终稿。未定前用中文/英文底稿，未覆盖语言用英文。开发以主需求文档为准。</p>
+<ul>
+<li>按钮：立即联系</li>
+<li>加载中：正在为你分配客服…</li>
+<li>成功分配：已为你分配专属客服。请点击下方按钮开始咨询。</li>
+<li>发出链接：请点击打开客服对话：</li>
+<li>无 start 参数：你好，请直接点击下方按钮联系客服。</li>
+<li>号池为空：客服正在接入，请稍后再试。</li>
+<li>链接打不开（用户再问）：请再次点击打开客服：</li>
+<li>更换客服：原客服暂不可用，正在为你更换。</li>
+<li>错误提示：不要对用户说「上报失败」「归因失败」「click_id 无效」。</li>
+<li>危险操作确认：仅管理员，例如「确认停用 @cs_sg_02？回复 /cs_disable @cs_sg_02 confirm」</li>
+</ul>
+<h3>6.3 面向管理员</h3>
+<ul>
+<li>成功：已启用 @cs_sg_02，在班，上限 40/30，今日 0，会话 0</li>
+<li>空状态：还没有客服号，先 /cs_add @username 40 30</li>
+<li>无权限：无权限</li>
+<li>告警：号池剩余名额不足 / 建联上报连续失败</li>
+</ul>
+</section><section id='7-非功能性需求'><h2>7. 非功能性需求</h2>
+<ul>
+<li>性能：Start 到分配结果 ≤ 2 秒（不含用户点 Start 的时间）。建联上报异步，不阻塞发客服链接。</li>
+<li>权限：管理员白名单。普通用户只有 Start、点按钮、发文本。管理命令不在 BotFather 的用户可见 command 列表里展示细节也可，但代码必须校验白名单。</li>
+<li>兼容性：Telegram Bot API 官方接口；用户端覆盖官方 Telegram Android。其他客户端能打开 <code>t.me</code> 即可。本次不做 iOS 白包 SDK。</li>
+<li>数据安全：签名密钥、Bot Token 只放服务端。日志可留 <code>click_id</code>、username，聊天正文默认不落库。[待补充] 是否因风控要存首条消息。</li>
+<li>数据存储：机器人独立库，至少有客服号表、粘性表、会话表。不写广告中台的号池表。</li>
+<li>可靠性：Webhook 收消息；服务重启后会话状态以数据库为准。Telegram 重复推送同一 update，按 <code>update_id</code> 幂等。</li>
+<li>多实例：一个国家一个机器人，各用自己的 Bot Token 和号池。配置不要写死成单例全局号池。</li>
+<li>时区：当日上限按实例配置时区清零，未定前 <code>Asia/Singapore</code>。</li>
+</ul>
+</section><section id='8-范围与非目标'><h2>8. 范围与非目标</h2>
+<p>本次做：</p>
+<ul>
+<li>创建可多实例部署的 Telegram 客服机器人</li>
+<li>Start 解析 <code>click_id</code></li>
+<li>号池与管理员命令</li>
+<li>粘性、在班优先、上限、最少分配、兜底</li>
+<li>「立即联系」后发客服号链接</li>
+<li>建联上报中台，失败重试</li>
+<li>管理员告警</li>
+</ul>
+<p>本次不做：</p>
+<ul>
+<li>不在广告中台里做客服号分配</li>
+<li>不让机器人打 Adjust</li>
+<li>不做用户始终留在机器人里的坐席工作台</li>
+<li>不做 WhatsApp</li>
+<li>不做独立 Web 管理后台</li>
+<li>不把 GAID 放进 start 参数</li>
+<li>不在用户可见预填文本里暴露追踪码</li>
+</ul>
+<p>能力上限（必须写进验收说明）：</p>
+<p>机器人能确认「用户愿意打开被分配的客服号」。  </p>
+<p>机器人不能确认「用户已经给该客服发出第一句话」或「客服已经回复」。</p>
+</section><section id='9-验收标准'><h2>9. 验收标准</h2>
+<p>在测试机器人、测试中台、测试白包上验收。</p>
+<table><thead><tr>
+<th>编号</th>
+<th>场景</th>
+<th>期望结果</th>
+</tr></thead><tbody>
+<tr>
+<td>B1</td>
+<td>SDK 打开 <code>t.me/bot?start=合法click_id</code>，用户点 Start</td>
+<td>2 秒内收到分配结果和「立即联系」</td>
+</tr>
+<tr>
+<td>B2</td>
+<td>用户点「立即联系」</td>
+<td>收到 <code>t.me/被分配号</code>；中台收到一条 connect；白包 Adjust 在配置齐全时出现一次建联</td>
+</tr>
+<tr>
+<td>B3</td>
+<td>同一 click_id 再点「立即联系」</td>
+<td>可再发链接；中台不再新增建联；Adjust 不重复</td>
+</tr>
+<tr>
+<td>B4</td>
+<td>同一 Telegram 用户 7 天内再次 Start</td>
+<td>仍是原客服号</td>
+</tr>
+<tr>
+<td>B5</td>
+<td>原客服号被 <code>/cs_disable</code></td>
+<td>再次 Start 分到其他启用号</td>
+</tr>
+<tr>
+<td>B6</td>
+<td>两个在班号上限不同、已分配不同</td>
+<td>新客分给已分配更少的那个</td>
+</tr>
+<tr>
+<td>B7</td>
+<td>在班号全满、存在离班号</td>
+<td>分给离班号，管理员收到告警</td>
+</tr>
+<tr>
+<td>B8</td>
+<td>无 start 参数</td>
+<td>可分号；不调中台 connect</td>
+</tr>
+<tr>
+<td>B9</td>
+<td>非法 start 参数</td>
+<td>同 B8</td>
+</tr>
+<tr>
+<td>B10</td>
+<td>第二个 Telegram 用户使用已被占用的 click_id</td>
+<td>可接待；不归因到这次买量</td>
+</tr>
+<tr>
+<td>B11</td>
+<td>中台 5xx</td>
+<td>用户仍能收到客服链接；机器人重试上报；管理员可看到失败</td>
+</tr>
+<tr>
+<td>B12</td>
+<td>非管理员发 <code>/cs_list</code></td>
+<td>看不到号池</td>
+</tr>
+<tr>
+<td>B13</td>
+<td><code>/cs_add</code> 后 <code>/cs_on</code></td>
+<td><code>/cs_list</code> 能看到该号在班</td>
+</tr>
+<tr>
+<td>B14</td>
+<td>广告点击但用户未 Start</td>
+<td>该号 <code>today_assigned</code> 不增加</td>
+</tr>
+<tr>
+<td>B15</td>
+<td>点击日志晚于 connect 回调</td>
+<td>中台 pending，日志到达后补归因；机器人侧仍显示成功发链</td>
+</tr>
+</tbody></table>
+</section><section id='10-实现分工'><h2>10. 实现分工</h2>
+<table><thead><tr>
+<th>工作</th>
+<th>负责人</th>
+<th>产出</th>
+</tr></thead><tbody>
+<tr>
+<td>BotFather 建机器人、拿到 Token</td>
+<td>运营 / 技术</td>
+<td>每国家一个 bot username + Token</td>
+</tr>
+<tr>
+<td>机器人服务：Start、号池、分号、按钮、上报</td>
+<td>机器人开发</td>
+<td>可部署的 bot 服务</td>
+</tr>
+<tr>
+<td>管理员白名单和命令</td>
+<td>机器人开发</td>
+<td>能加减号、上下班、改上限</td>
+</tr>
+<tr>
+<td>中台 <code>/v1/cs/connect</code> 与 pending 补齐</td>
+<td>中台开发</td>
+<td>按 click_id 归因并 S2S</td>
+</tr>
+<tr>
+<td>SDK 生成 click_id 并拼到 start</td>
+<td>SDK 开发</td>
+<td>客服广告点击打开带参机器人链接</td>
+</tr>
+<tr>
+<td>白包建联 Event Token</td>
+<td>Adjust 操作 + 中台运营</td>
+<td>白包能填建联事件 Key</td>
+</tr>
+<tr>
+<td>素材跳转改为对应国家机器人 URL</td>
+<td>中台运营</td>
+<td>不再填私人客服号</td>
+</tr>
+<tr>
+<td>测试验收</td>
+<td>测试</td>
+<td>跑完第 9 节</td>
+</tr>
+</tbody></table>
+</section><section id='11-待确认问题'><h2>11. 待确认问题</h2>
+<p>以下不阻塞按本文开发，但上线前要补：</p>
+<ol>
+<li>各机器人实例的语言和欢迎语终稿。</li>
+<li>当日上限清零时区是否按国家改，还是统一。</li>
+<li>中台域名、签名密钥、<code>/v1/cs/connect</code> 与 <code>/v1/cs/start</code> 是否拆分。</li>
+<li>加号时是否必须校验该 Telegram 用户名真实存在。</li>
+<li>是否给客服侧另推一条「新用户来了」通知。未定前不做。</li>
+<li>会话何时从 <code>open_chats</code> 减 1。未定前只在管理员 <code>/cs_close @username &lt;tg_user_id&gt;</code> 或粘性过期时减。建议补一个关闭命令。</li>
+<li>老版本 SDK 不会拼 <code>start</code> 时，该白包是否停发客服素材。</li>
+</ol>
+</section><section id='附录-老板确认记录'><h2>附录：老板确认记录</h2>
+<p>确认日期：2026-10-27</p>
+<ol>
+<li>客服建联广告跳转 Telegram 机器人。  </li>
+<li>由机器人分配客服账号，不在中台分号。  </li>
+<li>建联后由机器人报中台，中台 S2S 到白包 Adjust。  </li>
+<li>多客服账号按号池分配：粘性、在班优先、当日上限、最少接待、兜底。  </li>
+<li>一个国家一个机器人实例，素材跳对应 bot。  </li>
+<li>本次不做 WhatsApp，不做机器人内坐席工作台。</li>
+</ol></section>
+</main>
+<footer>配套 Markdown：Telegram客服机器人需求文档.md。中台只做点击归因和建联回传，不负责客服号分配。</footer>
+</body>
+</html>

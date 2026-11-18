@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>客服广告建联需求文档 V1.4</title>
+<style>
+  :root { --ink:#1c2430; --muted:#5c6b7a; --line:#e3e8ee; --bg:#f4f6f8; --card:#fff; --accent:#0f6fde; --code:#f3f5f8; --ok:#0d7a45; --ok-bg:#e8f6ee; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin:0; color:var(--ink); background:var(--bg); font:15px/1.65 "PingFang SC","Noto Sans SC","Segoe UI",sans-serif; }
+  header { background:#102033; color:#fff; padding:36px 24px 28px; }
+  .wrap { max-width:1080px; margin:0 auto; }
+  header h1 { margin:0 0 8px; font-size:28px; font-weight:650; }
+  header p { margin:0 0 12px; color:#c5d0dc; }
+  .meta { display:flex; flex-wrap:wrap; gap:8px; }
+  .chip { display:inline-block; border-radius:999px; padding:3px 10px; font-size:12px; background:rgba(255,255,255,.12); color:#dbe7f3; }
+  main { padding:24px 20px 72px; }
+  nav.toc, section { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:22px 24px; margin:0 0 16px; }
+  nav.toc ol { margin:0; columns:2; padding-left:1.2em; }
+  nav.toc li { break-inside:avoid; margin:4px 0; }
+  h2 { margin:0 0 12px; font-size:20px; }
+  h3 { margin:18px 0 8px; font-size:16px; }
+  h4 { margin:14px 0 6px; font-size:14px; color:#334155; }
+  p { margin:8px 0; }
+  a { color:var(--accent); }
+  ul, ol { margin:8px 0; padding-left:1.3em; }
+  li { margin:4px 0; }
+  table { width:100%; border-collapse:collapse; margin:10px 0 4px; font-size:13.5px; }
+  th, td { border:1px solid var(--line); padding:8px 10px; text-align:left; vertical-align:top; }
+  th { background:#f3f6fa; font-weight:650; }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12.5px; background:var(--code); padding:1px 5px; border-radius:4px; }
+  pre { background:#0f2133; color:#d7e6f5; border-radius:10px; padding:14px 16px; overflow:auto; font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+  pre code { background:transparent; color:inherit; padding:0; }
+  pre.mermaid, div.mermaid { background:#f8fafc; color:var(--ink); border:1px solid var(--line); }
+  .mermaid svg { max-width:100%; height:auto; display:block; margin:0 auto; }
+  .note { background:#eef5ff; border-radius:8px; padding:10px 12px; margin:10px 0; }
+  hr { border:0; border-top:1px solid var(--line); margin:16px 0; }
+  footer { max-width:1080px; margin:0 auto; color:var(--muted); font-size:13px; padding:0 20px 40px; }
+  @media (max-width:800px) { nav.toc ol { columns:1; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>客服广告建联需求文档</h1>
+    <p>给开发的完整交付：后台混合投放、SDK 点击、Telegram 机器人分号、中台归因、白包 Adjust S2S。</p>
+    <div class="meta">
+      <span class="chip">V1.4 本次更新：钉死后端 6 条实现分叉</span>
+      <span class="chip">2026-10-27</span>
+      <span class="chip">中台 / SDK / 机器人 / Adjust</span>
+      <span class="chip">白包不再选自有广告类型</span>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+<nav class="toc">
+  <h2>目录</h2>
+  <ol>
+    <li><a href="#1-产品概述">1. 产品概述</a></li>
+    <li><a href="#2-目标用户与场景">2. 目标用户与场景</a></li>
+    <li><a href="#3-端到端主流程">3. 端到端主流程</a></li>
+    <li><a href="#4-功能清单">4. 功能清单</a></li>
+    <li><a href="#5-中台后台">5. 中台后台</a></li>
+    <li><a href="#6-白包-SDK">6. 白包 SDK 🔴</a></li>
+    <li><a href="#7-中台服务">7. 中台服务</a></li>
+    <li><a href="#8-Telegram-机器人">8. Telegram 机器人 🔴</a></li>
+    <li><a href="#9-Adjust-与买量">9. Adjust 与买量</a></li>
+    <li><a href="#10-关键页面对照">10. 关键页面对照</a></li>
+    <li><a href="#11-非功能性需求">11. 非功能性需求</a></li>
+    <li><a href="#12-范围与非目标">12. 范围与非目标</a></li>
+    <li><a href="#13-验收标准">13. 验收标准</a></li>
+    <li><a href="#14-实现分工">14. 实现分工</a></li>
+    <li><a href="#15-待补充-不阻塞开发">15. 待补充（不阻塞开发）</a></li>
+    <li><a href="#附录-A-和旧口径的差异">附录 A：和旧口径的差异</a></li>
+    <li><a href="#附录-B-老板确认记录">附录 B：老板确认记录</a></li>
+  </ol>
+</nav>
+<section class="note" id="final-rules"><p>版本：V1.4（本次更新：钉死占用 click_id、HTTP 200、粘性计数、B7 告警、库失败、超级管理员配置）</p>
+<p>日期：2026-10-27</p>
+<p>交付对象：中台 / SDK / Telegram 机器人 / Adjust 配置 / 测试</p>
+<p>后台原型：本目录 <code>index.html</code>（v9）</p>
+<p>历史对照：<code>../2026-10-26-客服广告建联</code> 只作旧页面参考，不得按旧口径开发</p>
+<p>【最终口径，与旧稿/旧原型冲突时以本文为准】</p>
+<ol>
+<li><strong>建联</strong> = 用户在 Telegram 机器人点击「立即联系」，且机器人已发出该客服链接。不是点广告，不是打开 Telegram，也不是给客服发了第一句。</li>
+<li>客服素材跳转只允许国家机器人 <code>https://t.me/&lt;bot&gt;</code>，不能带 <code>?start=</code>，不能填私人号或 WhatsApp。</li>
+<li><strong>白包不再选自有广告类型。</strong> 一个白包可以同时关联多条「应用拉活」和「客服建联」投放。各广告位独立按 N 插入自有广告；该次自有广告从所有已关联、已启用投放的命中素材里选出价最高者。</li>
+<li>客服号分配只在 Telegram 机器人里做。中台不管号池。</li>
+<li>SDK 生成 <code>click_id</code> 并打开 <code>t.me/bot?start=click_id</code>。SDK 不报建联。机器人报中台，中台 S2S 白包 Adjust 建联事件。</li>
+<li><strong>B 包子账户</strong>挂在账户上，不挂在角色上。角色继续管菜单和操作；账户指定一个或多个投放后，只能看这些投放及其关联数据。</li>
+</ol>
+</section>
+<section id="1-产品概述">
+<h2 id="1-产品概述">1. 产品概述</h2>
+<p>白包广告位默认走 AdMob。开屏、Banner、激励各自按 N 插入自有广告。自有广告来自白包已关联的投放，投放类型可以是 <strong>B 包应用拉活</strong> 或 <strong>客服建联</strong>，二者可以同时存在于同一个白包。</p>
+<p>客服建联的目标：把买量进来的人导到 Telegram 客服成交，并把「确认联系」回传到 <strong>白包 Adjust</strong>，给 Facebook / Google 优化。应用拉活的目标不变：把人导到 B 包，把安装/付费回传白包 Adjust。</p>
+<p>同一白包里，这两种转化可以同时发生。例如：首页/开屏出 B 包应用拉活广告，其他广告位出客服建联广告。</p>
+<p>整条客服链拆成四段，不要混：</p>
+<table><thead><tr><th>段</th><th>谁做</th><th>结果</th></tr></thead><tbody>
+<tr><td>出广告</td><td>中台按国家+MCC+出价，在该白包所有关联投放里选素材；SDK 按 N 展示</td><td>展示</td></tr>
+<tr><td>点广告</td><td>SDK 生成 <code>click_id</code>，报中台，打开机器人</td><td>点击</td></tr>
+<tr><td>分客服</td><td>Telegram 机器人按自己的号池分配真实客服号</td><td>已分配，还不算建联</td></tr>
+<tr><td>建联回传</td><td>用户在机器人点「立即联系」→ 机器人报中台 → 中台 S2S 白包 Adjust</td><td>建联</td></tr>
+</tbody></table>
+<h3 id="1-1-一句话定位">1.1 一句话定位</h3>
+<p>给白包买量用的客服导流方案：广告跳到对应国家的 Telegram 机器人，机器人分客服号，确认联系后认回白包 Adjust。同一白包仍可同时投放应用拉活。</p>
+<h3 id="1-2-已锁定决策">1.2 已锁定决策</h3>
+<table><thead><tr><th>编号</th><th>决策点</th><th>锁定结果</th></tr></thead><tbody>
+<tr><td>D1</td><td>白包自有广告类型</td><td><strong>取消。</strong> 白包不再选「B包广告 / 客服建联」。该字段现网若存在则废弃，下发不再读取</td></tr>
+<tr><td>D2</td><td>一个白包能挂多少投放</td><td>可同时关联多条应用拉活 <strong>和</strong> 多条客服建联。不再互斥</td></tr>
+<tr><td>D3</td><td>广告位</td><td>不新增独立客服广告位。只混在开屏 / Banner / 激励</td></tr>
+<tr><td>D4</td><td>插入规则</td><td>默认 AdMob；按 N 插自有广告。三个广告位分开计、分开选素材</td></tr>
+<tr><td>D5</td><td>该次自有广告怎么选</td><td>该白包所有已关联、已启用投放里，广告位匹配且国家+MCC 命中的素材一起比出价，最高者下发；都未命中则 AdMob</td></tr>
+<tr><td>D6</td><td>客服投放放哪</td><td>仍放在「B包管理」，投放类型选客服建联。不新开顶级菜单</td></tr>
+<tr><td>D7</td><td>定向</td><td>客服：国家、MCC 配在每条素材上，国家且 MCC 都命中才出。应用拉活：国家、MCC 仍配在投放上</td></tr>
+<tr><td>D8</td><td>广告跳转</td><td>客服素材只填 Telegram 机器人 <code>https://t.me/&lt;bot&gt;</code>，不填私人客服号、不填 wa.me、不带 start</td></tr>
+<tr><td>D9</td><td>谁分客服号</td><td><strong>机器人。</strong> 中台不管号池、不在线、不分配</td></tr>
+<tr><td>D10</td><td>分给什么</td><td>真实客服 Telegram 账号。用户最终去和这个号聊天</td></tr>
+<tr><td>D11</td><td>机器人怎么拆</td><td>一个国家一个机器人实例，各有自己的号池。素材跳到对应 bot</td></tr>
+<tr><td>D12</td><td>什么时候分号</td><td>用户带着合法 <code>click_id</code> 点了 Start 之后。广告点击不分号</td></tr>
+<tr><td>D13</td><td>怎么分</td><td>熟客 7 天回原号；新客给当日已分配最少、其次当前会话最少的在班号；全离班也先分；满了走兜底号</td></tr>
+<tr><td>D14</td><td>建联口径</td><td>用户在机器人点击「立即联系」，且机器人已发出该客服链接</td></tr>
+<tr><td>D15</td><td>中台职责</td><td>下发素材、记展示/点击/<code>click_id</code>、收 start/connect、按 <code>click_id</code> 找白包和 GAID、去重后 S2S</td></tr>
+<tr><td>D16</td><td>Adjust</td><td>白包同时保留注册/付费/首充/B包安装/<strong>建联</strong> Event Token。哪种转化发生打哪种。机器人不碰 Adjust。建联不传金额</td></tr>
+<tr><td>D17</td><td>WhatsApp</td><td>本次不做</td></tr>
+<tr><td>D18</td><td>客服工作台</td><td>本次不做。客服用自己的 Telegram 号接待</td></tr>
+<tr><td>D19</td><td>中台后台管号</td><td>不做。加减号、上下班、改上限都在机器人管理员命令里</td></tr>
+<tr><td>D20</td><td>老 SDK</td><td>不会拼 <code>start</code> 的版本：该次请求排除全部客服素材，应用拉活照常可出。不要因此停掉整个白包</td></tr>
+<tr><td>D21</td><td>B 包子账户</td><td><strong>新增。</strong> 沿用现网角色权限，在账户上增加数据范围。指定投放后只能看对应投放及相关白包/素材/设备/看板数据。超级管理员必须看全部</td></tr>
+<tr><td>D22</td><td>机器人语言</td><td><strong>按用户环境语言自动切换。</strong> 以 Telegram <code>language_code</code> 为准，不按机器人实例国家写死。匹配不到用英文</td></tr>
+</tbody></table>
+<h3 id="1-3-各端边界">1.3 各端边界</h3>
+<table><thead><tr><th>系统</th><th>做</th><th>不做</th></tr></thead><tbody>
+<tr><td>中台后台</td><td>白包 N 和全套 Adjust Key、客服投放、素材（图/国家/MCC/机器人 URL）、报表、账户角色、B 包子账户数据范围</td><td>不管客服号名单；白包不再选自有广告类型；不按白包隔离账号</td></tr>
+<tr><td>白包 SDK</td><td>按 N 展示；报 show/click；点击生成 <code>click_id</code>；客服广告打开 <code>t.me/bot?start=click_id</code></td><td>不报建联；不等中台返回再跳</td></tr>
+<tr><td>中台服务</td><td>定向下发、跨类型比价、点击入库、<code>/v1/cs/start</code>、<code>/v1/cs/connect</code>、pending 补齐、S2S</td><td>不分号</td></tr>
+<tr><td>Telegram 机器人</td><td>解析 Start、号池、分号、发客服链接、报建联</td><td>不读 GAID，不打 Adjust</td></tr>
+<tr><td>客服账号</td><td>用自己的号和用户聊天</td><td>不负责归因</td></tr>
+<tr><td>Adjust / 买量</td><td>白包建联事件、映射给渠道</td><td>不接收 Telegram 账号和聊天内容</td></tr>
+</tbody></table>
+<h3 id="1-4-原待确认项-本次一并锁定">1.4 原待确认项（本次一并锁定）</h3>
+<table><thead><tr><th>原问题</th><th>锁定结果</th></tr></thead><tbody>
+<tr><td>start / connect 是否两个 URL</td><td><strong>两个。</strong> <code>POST /v1/cs/start</code> 只记漏斗，不 S2S；<code>POST /v1/cs/connect</code> 才建联并 S2S</td></tr>
+<tr><td>当日上限清零时区</td><td>按机器人实例配置，默认 <code>Asia/Singapore</code>。不同国家实例可配不同时区</td></tr>
+<tr><td>欢迎语终稿</td><td><strong>【本次更新】</strong> 用户侧文案按 Telegram <code>language_code</code> 自动切换。开发先用 8.2 底稿。终稿由运营替换，不阻塞开发。未覆盖语言用英文</td></tr>
+<tr><td>加号是否校验用户名真实存在</td><td>尽量调用 Telegram <code>getChat</code> 校验；失败允许入库并标记「未校验」，不阻塞加号</td></tr>
+<tr><td>是否给客服推「新用户来了」</td><td><strong>V1 不做</strong></td></tr>
+<tr><td>会话何时从 <code>open_chats</code> 减 1</td><td>管理员 <code>/cs_close @username &lt;tg_user_id&gt;</code>，或粘性 7 天到期</td></tr>
+<tr><td>中台域名、HMAC secret</td><td>部署配置，不写进产品文案。密钥只放服务端</td></tr>
+<tr><td>SDK 版本如何拦截老包</td><td>SDK 初始化继续带版本号。中台对不支持 <code>start</code> 的版本排除客服素材，应用拉活不受影响</td></tr>
+<tr><td>测试设备打不打 Adjust</td><td>建联照常落库。<strong>默认不打生产 Adjust。</strong> 是否打测试环境由部署开关 <code>adjust_s2s_for_test_device</code> 控制，默认 <code>false</code></td></tr>
+<tr><td>跳转 URL 要不要格式校验</td><td><strong>要。</strong> 客服素材必须 <code>^https://t.me/[A-Za-z0-9_]{5,32}$</code></td></tr>
+<tr><td>给客服对话框预填来源</td><td><strong>V1 不预填。</strong> 不要把 <code>click_id</code> 暴露给用户</td></tr>
+</tbody></table>
+<p>上线前仍需运营/运维提供、但不阻塞按本文开发的，只剩第 15 节三项。</p>
+</section>
+<section id="2-目标用户与场景">
+<h2 id="2-目标用户与场景">2. 目标用户与场景</h2>
+<table><thead><tr><th>角色</th><th>做什么</th></tr></thead><tbody>
+<tr><td>中台运营</td><td>配白包 N 和全套 Adjust Key；在 B 包管理建应用拉活/客服投放并关联白包；客服素材填对应国家机器人</td></tr>
+<tr><td>超级管理员</td><td>管全部投放和数据；给指定投放配置子账户</td></tr>
+<tr><td>B 包子账户</td><td>只看被授权的投放（应用拉活/客服建联）以及这些投放带出来的白包、素材、设备、看板数据</td></tr>
+<tr><td>机器人管理员</td><td>在对应国家机器人里加号、上下班、改上限、设兜底号</td></tr>
+<tr><td>客服</td><td>用被分配到的 Telegram 号接待</td></tr>
+<tr><td>广告用户</td><td>点客服广告 → Start 机器人 → 点立即联系 → 和客服号聊天</td></tr>
+<tr><td>买量运营</td><td>在白包 Adjust / 渠道里按建联和/或付费优化</td></tr>
+</tbody></table>
+<p>典型场景：</p>
+<ol>
+<li><strong>混合投放。</strong> A2test 同时关联 B2（应用拉活）和「客服-东南亚」。开屏命中后 B2 出价更高，出 B2；Banner 命中后客服素材出价更高，出客服广告。用户在同一白包里既可能去 B 包付费，也可能去 Telegram 建联。</li>
+<li><strong>新加坡建联。</strong> 新加坡用户点到客服开屏，SDK 打开 <code>https://t.me/sg_cs_bot?start=&lt;click_id&gt;</code>。用户 Start 后分到 <code>@cs_sg_02</code>，点「立即联系」。中台把这次建联打到 A2test 的 Adjust。</li>
+<li><strong>熟客。</strong> 同一 Telegram 用户 3 天后再进同一个机器人，不分新号，还是原来的客服。再点「立即联系」不重复报中台、不重复打 Adjust。</li>
+<li><strong>号池不足。</strong> 在班号全满，存在离班号：分给离班号，用户仍能建联，管理员收到告警。</li>
+<li><strong>自然进线。</strong> 用户直接搜到机器人、没有 start：可分号接待，不报买量建联。</li>
+<li><strong>老 SDK。</strong> 某白包已配客服投放，但设备上的 SDK 不会拼 start：这次请求只出应用拉活或 AdMob，不出客服素材。</li>
+<li><strong>B 包子账户。</strong> 超管给 <code>com.demo2b.app.b2</code> 建子账户 <code>b2ops</code>。该账户登录后只能看到 B2 投放、B2 素材、B2 广告数据，以及关联了 B2 的白包；看不到 B1 和「客服-东南亚」。看板数字只汇总 B2。</li>
+</ol>
+</section>
+<section id="3-端到端主流程">
+<h2 id="3-端到端主流程">3. 端到端主流程</h2>
+<h3>系统职责流程图</h3>
+<p>白包 SDK 出客服广告并跳国家机器人，机器人分号，用户点「立即联系」后机器人报中台，中台 S2S 白包 Adjust。建联不是点广告、也不是打开 Telegram。</p>
+<pre class="mermaid">flowchart TD
+  subgraph White["白包 App / SDK"]
+    Req["请求广告"]
+    ShowAd["展示客服素材并报 show"]
+    GenId["生成本地 click_id"]
+    OpenTg["立刻打开 t.me 国家机器人并带上 start"]
+  end
+
+  subgraph Mid["中台"]
+    Pick["该广告位轮到自有广告时跨投放、跨类型比价"]
+    ShowLog["记展示"]
+    ClickLog["记 click 和 click_id"]
+    StartApi["POST /v1/cs/start 只记漏斗，不打 Adjust"]
+    ConnectApi["POST /v1/cs/connect"]
+    Lookup["按 click_id 找回 GAID 和白包"]
+    Dedup{"该 click_id 或白包加 GAID 已建联"}
+    Skip["落库去重，不重复 S2S"]
+    SendAdj["S2S 白包 Adjust 建联事件，不传金额"]
+  end
+
+  subgraph Bot["Telegram 机器人"]
+    UserStart{"用户点 Start"}
+    Assign["按本国号池分真实客服号，熟客 7 天回原号"]
+    Btn["展示立即联系 callback 按钮"]
+    Tap{"用户点立即联系"}
+    SendLink["同时发出客服号链接"]
+  end
+
+  subgraph Adj["白包 Adjust"]
+    EvToken["建联 Event Token"]
+  end
+
+  Req --> Pick
+  Pick -->|"ad_kind=cs，jump_url 不带 start"| ShowAd
+  ShowAd --> ShowLog
+  ShowAd --> GenId
+  GenId --> ClickLog
+  GenId --> OpenTg
+  OpenTg --> UserStart
+  UserStart -->|否| OnlyClick["只算点击，不分号，不建联"]
+  UserStart -->|是| Assign
+  Assign --> StartApi
+  Assign --> Btn
+  Btn --> Tap
+  Tap -->|否| AssignedOnly["已分配，不算建联"]
+  Tap -->|是| SendLink
+  SendLink --> ConnectApi
+  ConnectApi --> Lookup
+  Lookup --> Dedup
+  Dedup -->|是| Skip
+  Dedup -->|否| SendAdj
+  SendAdj --> EvToken
+</pre>
+<h3>判定细节</h3>
+<p>主链路是客服建联。异常分支：老 SDK、未命中、无 start、号池不足、connect 早于 click。</p>
+<pre class="mermaid">flowchart TD
+  Req["白包请求广告"] --> NeedOwn{"该广告位是否轮到自有广告"}
+  NeedOwn -->|否| AdMob["出 AdMob"]
+  NeedOwn -->|是| Pool["收集该白包所有已关联已启用投放的对应广告位素材"]
+  Pool --> Ver{"SDK 支持 start"}
+  Ver -->|否| DropCs["排除全部客服素材"]
+  Ver -->|是| Keep["保留客服和应用拉活素材"]
+  DropCs --> Hit{"国家且 MCC 命中"}
+  Keep --> Hit
+  Hit -->|无命中| AdMob
+  Hit -->|有命中| Bid["跨类型比出价，最高者下发"]
+  Bid --> ShowAd["SDK 展示并报 show"]
+  ShowAd --> Kind{"ad_kind"}
+  Kind -->|b| BJump["打开应用拉活跳转，不拼 start"]
+  Kind -->|cs| GenId["SDK 生成 click_id，异步报 click，立刻打开机器人并带上 start"]
+  GenId --> UserStart{"用户点 Start"}
+  UserStart -->|否| OnlyClick["只算点击，不分号，不建联"]
+  UserStart -->|是| Assign["机器人按号池分真实客服号"]
+  Assign --> Btn["展示立即联系 callback 按钮"]
+  Btn --> Tap{"用户点立即联系"}
+  Tap -->|否| AssignedOnly["已分配，不算建联"]
+  Tap -->|是| SendLink["发出客服号链接，同时 POST connect"]
+  SendLink --> Lookup["中台按 click_id 找 GAID 和白包"]
+  Lookup --> Dup{"该 click_id 或 app_id 加 gaid 已建联"}
+  Dup -->|是| Skip["落库去重，不重复 S2S"]
+  Dup -->|否| SendAdj["白包 Adjust 打建联事件，不传金额"]
+</pre>
+<p>广告位选择：</p>
+<pre class="mermaid">flowchart TD
+  Slot["某个广告位要出一条自有广告"] --> Revive["应用拉活素材：投放级国家加 MCC"]
+  Slot --> CsAd["客服素材：素材级国家加 MCC"]
+  Revive --> HitSet["命中集合"]
+  CsAd --> HitSet
+  HitSet --> Winner["出价最高者胜"]
+  Winner --> Deliver["下发该素材，带 ad_kind=b 或 cs"]
+</pre>
+</section>
+<section id="4-功能清单">
+<h2 id="4-功能清单">4. 功能清单</h2>
+<ul>
+<li>🔴 白包：去掉自有广告类型；保留三个 N；保留全套 Adjust Key（含建联）</li>
+<li>🔴 B 包管理：投放类型应用拉活 / 客服建联；可同时关联同一白包</li>
+<li>🔴 客服素材：图、广告位、出价、国家、MCC、<code>t.me</code> 机器人 URL</li>
+<li>🔴 下发：跨投放、跨类型、按广告位比价；老 SDK 排除客服素材</li>
+<li>🔴 SDK：<code>click_id</code> + <code>t.me/bot?start=click_id</code></li>
+<li>🔴 机器人：Start、号池、分号、「立即联系」、报中台；用户语文案按环境语言自动切换</li>
+<li>🔴 中台：click 入库、start 漏斗、connect 归因、pending 48h、去重、S2S</li>
+<li>🟡 报表：展示/点击合计；付费只算应用拉活；建联只算客服「立即联系」</li>
+<li>🟡 测试设备：跳过定向和频次；建联落库；默认不打生产 Adjust</li>
+<li>🔴 账户权限：沿用现网角色（菜单+操作）；账户增加 B 包/投放数据范围，子账户只能看授权投放的相关数据</li>
+<li>⚪ 不做：WhatsApp、独立客服广告位、中台号池、机器人内坐席工作台、给客服推新用户通知、按白包隔离账号</li>
+</ul>
+<h3 id="4-1-白包编辑页对照">4.1 白包编辑页对照</h3>
+<pre><code>+--------------------------------------------------+
+| 编辑白包APP                                      |
++--------------------------------------------------+
+| APP名称 [A2test]     包名 [com.a22.ad.test.a]    |
+| 开屏N [3]  BannerN [1]  激励N [0]                |
+| AdjustToken [______]  注册Key [______]           |
+| 付费Key [______]  首充Key [______]               |
+| B包安装Key [______]  建联事件Key [______]        |
+| 说明：不再选自有广告类型。关联哪些投放在 B包管理 |
++--------------------------------------------------+</code></pre>
+</section>
+<section id="5-中台后台">
+<h2 id="5-中台后台">5. 中台后台</h2>
+<p>不新开顶级菜单。<strong>【本次更新】</strong> 权限分两层，都沿用现网账户/角色页，不新开菜单：</p>
+<ol>
+<li><strong>功能权限</strong>：继续用现网角色。白包配置走白包权限，客服素材走物料权限，B 包/投放走 B 包权限。</li>
+<li><strong>数据范围</strong>：挂在账户上，不挂在角色上。给账户指定一个或多个投放后，该账户只能看这些投放及其关联数据。</li>
+</ol>
+<h3 id="5-1-白包-APP">5.1 白包 APP 🔴</h3>
+<p>相对现网：</p>
+<table><thead><tr><th>项</th><th>处理</th></tr></thead><tbody>
+<tr><td>自有广告类型</td><td><strong>删除。</strong> 表单不再展示。服务端不再用该字段过滤投放。历史值可留库但忽略</td></tr>
+<tr><td>开屏 N / Banner N / 激励 N</td><td>保留，含义不变</td></tr>
+<tr><td>AdjustToken</td><td>保留</td></tr>
+<tr><td>注册 / 付费 / 首充 / B包安装事件Key</td><td>保留，始终可填</td></tr>
+<tr><td>建联事件Key</td><td><strong>新增</strong>，始终可填，不要跟类型走</td></tr>
+<tr><td>客服素材按钮</td><td>白包上没有。素材只在 B 包管理</td></tr>
+</tbody></table>
+<p>保存时不要再做「类型不一致」拦截。同一白包被应用拉活和客服建联同时勾选是合法的。</p>
+<p>N 的含义不变，三个广告位独立计数：</p>
+<table><thead><tr><th>N</th><th>含义</th></tr></thead><tbody>
+<tr><td>0</td><td>该位一直 AdMob</td></tr>
+<tr><td>1</td><td>该位一直自有广告</td></tr>
+<tr><td>5</td><td>每 5 次展示插 1 次自有</td></tr>
+</tbody></table>
+<p>「自有广告」不再等于某一种投放类型，只表示「这次不出 AdMob，而出关联投放里选中的那条素材」。</p>
+<h3 id="5-2-B-包管理">5.2 B 包管理 🔴</h3>
+<p>投放类型：</p>
+<table><thead><tr><th>类型</th><th>必填</th><th>定向放哪</th></tr></thead><tbody>
+<tr><td>应用拉活</td><td>包名、商店、国家、MCC、关联白包</td><td>投放上</td></tr>
+<tr><td>客服建联</td><td>投放名称、关联白包</td><td>国家和 MCC 在素材上。不强制包名和商店</td></tr>
+</tbody></table>
+<p>一个投放可关联多个白包。一个白包可被多个投放关联，类型可以混。</p>
+<p>投放状态：</p>
+<table><thead><tr><th>状态</th><th>含义</th></tr></thead><tbody>
+<tr><td>投放中</td><td>投放启用，且至少关联一个启用中的白包</td></tr>
+<tr><td>部分投放</td><td>关联了多个白包，其中部分禁用</td></tr>
+<tr><td>未投放</td><td>未关联白包，或关联的白包全部禁用</td></tr>
+<tr><td>已停用</td><td>投放本身停用。数据保留，不再下发</td></tr>
+</tbody></table>
+<p>停用投放：停止出该投放的广告，历史数据和关联保留。没有「切换白包类型」这个动作。</p>
+<h3 id="5-3-客服素材">5.3 客服素材 🔴</h3>
+<table><thead><tr><th>字段</th><th>必填</th><th>规则</th></tr></thead><tbody>
+<tr><td>广告类型</td><td>是</td><td>开屏 / Banner / 激励</td></tr>
+<tr><td>素材图</td><td>是</td><td>沿用现网上传</td></tr>
+<tr><td>出价</td><td>是</td><td>≥ 0</td></tr>
+<tr><td>跳转 URL</td><td>是</td><td>必须 <code>^https://t.me/[A-Za-z0-9_]{5,32}$</code>。保存时校验。拒绝 <code>?start=</code>、<code>wa.me</code>、私人号</td></tr>
+<tr><td>国家</td><td>是</td><td>可多选，不允许空</td></tr>
+<tr><td>MCC</td><td>是</td><td>可多选，不允许空</td></tr>
+<tr><td>状态</td><td>是</td><td>启用 / 停用</td></tr>
+</tbody></table>
+<p>一条素材可以覆盖多个国家，但这些国家必须共用同一个机器人。新加坡和越南如果是两个 bot，就要拆成两条素材。</p>
+<p>不要把私人客服号写进跳转。分号不在素材里完成。</p>
+<p>保存失败留在表单并提示。成功提示并刷新列表。</p>
+<h3 id="5-4-出广告规则">5.4 出广告规则 🔴</h3>
+<p>当某广告位按 N 轮到自有广告时，按下面顺序选 <strong>一条</strong> 素材。应用拉活和客服建联走同一套竞争，不要先按类型过滤。</p>
+<ol>
+<li>取出该白包所有 <strong>启用中</strong> 的关联投放（两种类型都要）。</li>
+<li>取出这些投放里，广告位匹配且启用中的素材。</li>
+<li>若该次请求的 SDK <strong>不支持</strong> 给 Telegram 链接拼 <code>start</code>：排除全部客服素材，应用拉活留下。</li>
+<li>定向过滤：</li>
+</ol>
+<p>   - 客服素材：设备 IP 国家在素材国家列表，且 MCC 在素材 MCC 列表。</p>
+<p>   - 应用拉活素材：设备 IP 国家在投放国家列表，且 MCC 在投放 MCC 列表。</p>
+<ol>
+<li>剩余集合为空 → 本次该位出 AdMob。</li>
+<li>否则选出价最高者；同价保留先配置的（创建时间更早，或现网等价稳定次序）。</li>
+<li>下发时带 <code>ad_kind=cs</code> 或 <code>ad_kind=b</code>，<code>jump_url</code> 仍是静态地址，初始化时不要写入 <code>click_id</code>。</li>
+</ol>
+<p>测试设备：跳过定向和频次，直接在该位所有已关联启用素材里选出价最高者。老 SDK 测试设备同样排除客服素材。</p>
+<p>不要再实现「白包类型与投放类型不一致 → 未投放」。这条作废。</p>
+<h3 id="5-5-报表">5.5 报表</h3>
+<table><thead><tr><th>指标</th><th>口径</th></tr></thead><tbody>
+<tr><td>展示</td><td>SDK <code>event=show</code> 的自有广告（应用拉活 + 客服）</td></tr>
+<tr><td>点击</td><td>SDK <code>event=click</code> 的自有广告（应用拉活 + 客服）</td></tr>
+<tr><td>建联</td><td>中台 <code>cs_connect_log</code> 归因成功的记录。<strong>不是点击，不是打开 Telegram</strong></td></tr>
+<tr><td>开口</td><td>可选。<code>/v1/cs/start</code> 成功。不算建联，不打 Adjust</td></tr>
+<tr><td>付费</td><td>只统计应用拉活</td></tr>
+<tr><td>安装</td><td>只统计应用拉活的 B 包安装</td></tr>
+</tbody></table>
+<p>看板：展示/点击 = 全部自有广告合计；付费只算应用拉活；建联只算客服建联。</p>
+<p>白包列表同时展示付费和建联，因为同一白包两种都可能发生。</p>
+<p>客服投放的广告数据弹窗：只留展示、点击、建联。</p>
+<p>应用拉活投放的广告数据弹窗：安装、日活、展示、点击、付费。</p>
+<p>漏斗建议在客服投放详情能看到：展示 → 点击 → 开口（如有）→ 建联。</p>
+<h3 id="5-6-账户与-B-包数据范围">5.6 账户与 B 包数据范围 🔴 【本次更新】</h3>
+<p>对照现网 AdControl 账户/角色：</p>
+<table><thead><tr><th>现网能力</th><th>本次处理</th></tr></thead><tbody>
+<tr><td>账户：用户名、密码、姓名、角色、增删改密</td><td><strong>保留</strong></td></tr>
+<tr><td>角色：按模块勾选菜单和操作</td><td><strong>保留。</strong> 数据概览、白包APP、B包管理、广告物料、设备管理、账户管理、角色管理</td></tr>
+<tr><td>按投放/B 包隔离数据</td><td><strong>新增。</strong> 现网没有，所有账号目前都能看到全部投放</td></tr>
+</tbody></table>
+<p>不要把数据范围做成新角色类型，也不要按白包隔离。隔离主键是 <strong>B 包管理里的投放</strong>，包含应用拉活和客服建联。</p>
+<h4>两层权限</h4>
+<table><thead><tr><th>层</th><th>配在哪</th><th>管什么</th><th>例子</th></tr></thead><tbody>
+<tr><td>功能权限</td><td>角色</td><td>能进哪些菜单、能不能新增/编辑/删除</td><td>运营可看 B 包列表和广告数据，不能管账户</td></tr>
+<tr><td>数据范围</td><td>账户</td><td>能看哪些投放的数据</td><td><code>b2ops</code> 只授权 <code>com.demo2b.app.b2</code></td></tr>
+</tbody></table>
+<p>生效方式：功能权限 <strong>且</strong> 数据范围，两层都过才展示。有 B 包查看权限但没授权该投放 → 看不到。授权了投放但角色没勾 B 包菜单 → 进不去 B 包管理。</p>
+<h4>账户上的数据范围字段</h4>
+<p>在现网「新增/编辑管理员」里，角色下面增加：</p>
+<pre><code>+--------------------------------------------------+
+| 新增/编辑管理员                                  |
+| 用户名 [b2ops]   密码 [******]                   |
+| 姓名   [B2运营]  角色 [运营]                     |
+| 数据范围                                         |
+|   ( ) 全部投放     可看所有应用拉活和客服建联     |
+|   (•) 指定投放     必选至少 1 个投放              |
+|       [x] com.demo2b.app.b2   应用拉活            |
+|       [ ] com.demo2b.app.b1   应用拉活            |
+|       [ ] 客服-东南亚         客服建联            |
++--------------------------------------------------+</code></pre>
+<table><thead><tr><th>字段</th><th>规则</th></tr></thead><tbody>
+<tr><td>全部投放</td><td>与现网超管行为一致，能看全部投放和全部白包</td></tr>
+<tr><td>指定投放</td><td>多选 B 包管理中的投放，应用拉活和客服建联都可以勾。至少 1 个</td></tr>
+<tr><td>超级管理员</td><td>必须「全部投放」，表单禁用指定。不能把超管改成子账户</td></tr>
+<tr><td>未指定</td><td>非超管保存时，数据范围必填。禁止保存成「指定投放但一个都没勾」</td></tr>
+<tr><td>谁能配</td><td>仅有账户编辑权限的人可改别人的数据范围。子账户不能给自己扩权</td></tr>
+</tbody></table>
+<p>账户列表增加「数据范围」列：全部投放 / 投放名称列表。</p>
+<h4>指定投放后能看什么</h4>
+<p>以授权 <code>com.demo2b.app.b2</code> 为例。B2 当前关联白包 A2test。</p>
+<table><thead><tr><th>页面</th><th>子账户看到</th><th>看不到</th></tr></thead><tbody>
+<tr><td>数据概览</td><td>只汇总授权投放及其关联白包</td><td>其他投放的安装/展示/点击/付费/建联</td></tr>
+<tr><td>白包 APP</td><td>只列出至少关联了一个授权投放的白包；列表和详情指标只统计授权投放</td><td>未关联授权投放的白包；同一白包上其他投放贡献的付费/建联</td></tr>
+<tr><td>B 包管理</td><td>只列出授权投放</td><td>其他应用拉活、其他客服投放</td></tr>
+<tr><td>广告素材 / 广告数据</td><td>只打开授权投放的素材和数据</td><td>用 URL/ID 打开未授权投放 → 无权限</td></tr>
+<tr><td>设备管理</td><td>只看授权投放所关联白包下的设备</td><td>其他白包设备</td></tr>
+<tr><td>账户 / 角色</td><td>仍按角色功能权限。运营角色默认无这两项</td><td>不能改自己的数据范围，不能新建超管</td></tr>
+</tbody></table>
+<p>关联白包的处理：</p>
+<ul>
+<li>子账户可以在自己的投放里勾选/取消关联白包，否则没法把 B 包投到新白包。</li>
+<li>勾上新白包后，该白包会出现在他的白包列表里，但指标仍然只算他的投放。</li>
+<li>子账户 <strong>不能编辑白包全局配置</strong>（N、Adjust Token、事件 Key、启停）。这些是白包级配置，会影响未授权投放。即使角色勾了「新增/编辑APP」，指定投放账户也禁用白包编辑。</li>
+<li>子账户 <strong>不能新增投放</strong>。新投放由超管创建并授权后，才会进入该子账户范围。</li>
+<li>子账户可以编辑已授权投放的资料、素材、启停（需具备对应功能权限）。</li>
+</ul>
+<h4>空态、越权和变更</h4>
+<ul>
+<li>授权投放全部被删除或停用后仍留在范围里：列表按现网筛选展示；若一条都看不见，空态文案「暂无授权投放，请联系管理员」。</li>
+<li>前端隐藏不够。列表、详情、广告数据、素材、导出、统计接口都必须按账户数据范围过滤。未授权 ID 返回无权限，不要 404 冒充不存在。</li>
+<li>超管把某投放从子账户范围里拿掉：该账户立即看不到该投放。历史操作日志保留。</li>
+<li>停用账户：不能登录。授权投放本身不受影响。</li>
+<li>一个投放可以同时授权给多个子账户。</li>
+<li>本次 <strong>不按白包隔离</strong>，也不做国家/MCC 级数据范围。</li>
+</ul>
+<h4>建议角色搭配</h4>
+<p>现网角色继续用，不必新增「B包运营」角色类型。建议：</p>
+<table><thead><tr><th>角色</th><th>功能权限</th><th>数据范围</th></tr></thead><tbody>
+<tr><td>超级管理员</td><td>全部模块</td><td>全部投放，不可改</td></tr>
+<tr><td>运营</td><td>数据概览、白包查看、B 包查看/编辑、物料、设备。不要勾账户/角色</td><td>全部投放，或指定投放</td></tr>
+</tbody></table>
+<p>原型体验账号：<code>admin</code> 看全部；<code>b2ops</code> 只看 B2。</p>
+</section>
+<section id="6-白包-SDK">
+<h2 id="6-白包-SDK">6. 白包 SDK 🔴</h2>
+<p>现有点击是：异步报 click，再直接打开素材静态 <code>jump_url</code>。客服广告必须改；应用拉活保持原逻辑。</p>
+<h3 id="6-1-下发">6.1 下发</h3>
+<p>中台 <code>ad_delivery</code> 每个广告位增加：</p>
+<table><thead><tr><th>字段</th><th>说明</th></tr></thead><tbody>
+<tr><td>ad_id / source_url / jump_url</td><td>现有</td></tr>
+<tr><td>ad_kind</td><td><code>cs</code> 或 <code>b</code>。客服为 <code>cs</code></td></tr>
+</tbody></table>
+<p><code>jump_url</code> 仍是静态机器人地址，例如 <code>https://t.me/sg_cs_bot</code>。初始化时不要写入 <code>click_id</code>。</p>
+<p>SDK 初始化继续上报版本号，供中台判断是否支持 <code>start</code>。</p>
+<h3 id="6-2-展示">6.2 展示</h3>
+<p>与现有一致，报 <code>event=show</code>。</p>
+<h3 id="6-3-点击">6.3 点击 🔴</h3>
+<pre><code>click_id = 本地生成，16～24 位，仅 A-Za-z0-9_-
+异步 report：现有字段 + click_id
+if ad_kind == cs:
+    优先用 Telegram 包名打开 https://t.me/&lt;bot&gt;?start=&lt;click_id&gt;
+    否则系统打开该 https 链接
+else:
+    现有 openBrowser(jump_url)</code></pre>
+<p>要求：</p>
+<ul>
+<li>不要等点击上报成功再跳。上报失败进现有离线队列。</li>
+<li>不要把 GAID 放进 start。</li>
+<li>不要由 SDK 报建联。</li>
+<li>打开失败只算点击，不算建联。</li>
+<li>应用拉活广告不要拼 <code>start</code>。</li>
+<li><code>click_id</code> 示例：<code>cK8x2mQ9pL0aB3nR7tYw4</code></li>
+</ul>
+<p>Telegram 包名尝试顺序：<code>org.telegram.messenger</code>，再 <code>org.telegram.messenger.web</code>，再 <code>org.thunderdog.challegram</code>，都没有则普通 VIEW。</p>
+<p>老版本 SDK 不会拼 <code>start</code>：不要靠运营「别给这个白包配客服」。中台必须在下发时排除客服素材。</p>
+</section>
+<section id="7-中台服务">
+<h2 id="7-中台服务">7. 中台服务</h2>
+<h3 id="7-1-点击日志">7.1 点击日志</h3>
+<p><code>ad_log</code> 增加 <code>click_id</code>。<code>event=click</code> 且 <code>ad_kind=cs</code> 时必填。</p>
+<p>展示事件可以没有。</p>
+<p>用 <code>click_id</code> 能反查 <code>gaid、app_id、ad_id、ad_type、package_name、create_time</code>。</p>
+<h3 id="7-2-开口接口">7.2 开口接口 🟡</h3>
+<p><code>POST /v1/cs/start</code></p>
+<p>Header 与 connect 相同（见 7.3）。</p>
+<p>Body：</p>
+<table><thead><tr><th>字段</th><th>必填</th><th>规则</th></tr></thead><tbody>
+<tr><td>click_id</td><td>是</td><td>16～24，<code>A-Za-z0-9_-</code></td></tr>
+<tr><td>telegram_user_id</td><td>是</td><td>数字字符串</td></tr>
+<tr><td>telegram_username</td><td>否</td><td>可空</td></tr>
+<tr><td>event</td><td>是</td><td>固定 <code>start</code></td></tr>
+<tr><td>start_time</td><td>是</td><td>unix 秒</td></tr>
+</tbody></table>
+<p>只记漏斗。不 S2S。无合法 click 日志时可先 pending，等点击到达后再记开口，最多 48 小时。</p>
+<p>第一期若排期紧，机器人可先只记本地，中台后补。但接口路径先定下来，不要和 connect 混用。</p>
+<h3 id="7-3-建联接口">7.3 建联接口 🔴</h3>
+<p><code>POST /v1/cs/connect</code></p>
+<p>Header：</p>
+<table><thead><tr><th>字段</th><th>规则</th></tr></thead><tbody>
+<tr><td>X-Cs-Timestamp</td><td>unix 秒，与服务器差 ≤ 300</td></tr>
+<tr><td>X-Cs-Sign</td><td><code>hex(hmac_sha256(secret, timestamp + "." + raw_body))</code></td></tr>
+<tr><td>Content-Type</td><td>application/json</td></tr>
+</tbody></table>
+<p>Body：</p>
+<table><thead><tr><th>字段</th><th>必填</th><th>规则</th></tr></thead><tbody>
+<tr><td>click_id</td><td>是</td><td>16～24，<code>A-Za-z0-9_-</code></td></tr>
+<tr><td>telegram_user_id</td><td>是</td><td>数字字符串</td></tr>
+<tr><td>telegram_username</td><td>否</td><td>可空</td></tr>
+<tr><td>cs_account</td><td>是</td><td>不含 <code>@</code></td></tr>
+<tr><td>connect_time</td><td>是</td><td>unix 秒，按钮点击时间</td></tr>
+<tr><td>event</td><td>是</td><td>固定 <code>connect</code></td></tr>
+</tbody></table>
+<p>禁止收 GAID、聊天内容、手机号。GAID 只从点击日志取。</p>
+<p>处理顺序：</p>
+<ol>
+<li>验签。</li>
+<li>用 <code>click_id</code> 找点击日志。找不到 → 写入 pending，返回 <code>attributed=false</code>，等点击到达，最多 48 小时。</li>
+<li><code>click_id</code> 已被其他 telegram_user_id 占用 → <code>attributed=false</code>，不 S2S。这是并发兜底；机器人对后来者应直接不调 connect。</li>
+<li>该 <code>click_id</code> 已建联，或该 <code>app_id+gaid</code> 已建联 → <code>duplicate=true</code>，不重复 S2S。</li>
+<li>点击过期（超过 7 天）→ <code>attributed=false</code>。</li>
+<li>白包无 <code>adjust_token</code> 或无建联 Event Key → 建联落库，跳过 S2S，打日志。</li>
+<li>测试设备且 <code>adjust_s2s_for_test_device=false</code> → 建联落库，不打生产 Adjust。</li>
+<li>否则写 <code>cs_connect_log</code>，<code>callS2S(gaid, adjust_token, connect_event_key, 0, "")</code>，不传金额。</li>
+</ol>
+<p>S2S 字段与现有注册事件相同：<code>s2s=1、app_token、gps_adid、event_token、created_at</code>。</p>
+<p><code>created_at</code> 用建联时间。不传 Telegram 资料，不传客服账号。</p>
+<p>返回约定：沿用现网 web-ad，<strong>业务结果一律 HTTP 200 + body <code>code</code></strong>。<code>attributed=true</code>、<code>attributed=false</code>、<code>duplicate=true</code> 都不要用 HTTP 409。HTTP 4xx 只表示验签或时间窗失败，机器人不重试。HTTP 5xx / 超时才重试。中台占用校验保留作并发兜底；机器人对已占用 click_id 应直接不调 connect。</p>
+<pre><code>{ "code": 200, "data": { "attributed": true, "duplicate": false } }</code></pre>
+<h3 id="7-4-去重">7.4 去重</h3>
+<table><thead><tr><th>键</th><th>规则</th></tr></thead><tbody>
+<tr><td>click_id</td><td>只能被第一个 Start 的 Telegram 用户占用</td></tr>
+<tr><td>click_id 建联</td><td>只成功一次</td></tr>
+<tr><td>app_id + gaid</td><td>只 S2S 一次建联事件</td></tr>
+</tbody></table>
+<p>应用拉活的安装/付费去重沿用现网，与建联互不影响。同一 GAID 可以既有付费 S2S，也有建联 S2S。</p>
+</section>
+<section id="8-Telegram-机器人">
+<h2 id="8-Telegram-机器人">8. Telegram 机器人 🔴</h2>
+<p>号池、分号、管理员命令都在机器人里。不在广告后台做号池，也不新增独立 Web 管号后台。</p>
+<h3 id="8-1-实例">8.1 实例</h3>
+<p>一个国家一个 Bot Token、一个号池。广告素材跳哪个 bot，就进哪个池。机器人 <strong>不必</strong> 向中台查询国家来分号。</p>
+<p>运营在 BotFather 创建各国机器人，把 username 填进对应客服素材的跳转 URL，把 Token 配到该实例的部署配置。</p>
+<h3 id="8-2-用户流程">8.2 用户流程</h3>
+<ol>
+<li>收到 <code>/start &lt;click_id&gt;</code>。合法且未被其他 telegram_user_id 占用 → 归因会话，本用户占用该 click_id。合法但已被占用 → 可分号接待，本地标非归因，禁止调 start/connect。空或非法当自然客服：可分号，不报中台。</li>
+<li>2 秒内给出分配结果。「立即联系」必须是 <strong>callback 按钮</strong>，不能是直接 url 按钮，否则收不到点击，无法报建联。</li>
+<li>用户点按钮：先异步报中台，<strong>同时</strong>发 <code>https://t.me/&lt;cs_account&gt;</code>。中台失败也不能把人卡住。</li>
+<li>同一按钮连点：只第一次报中台，之后只补发链接。</li>
+<li>用户说打不开：再发一次同一链接，不换号，不重复报。</li>
+</ol>
+<p>用户文案不要出现 click_id、GAID、上报、归因。底稿：</p>
+<ul>
+<li>正在为你分配客服…</li>
+<li>已为你分配专属客服。请点击下方按钮开始咨询。</li>
+<li>请点击打开客服对话：</li>
+<li>客服正在接入，请稍后再试。</li>
+<li>原客服暂不可用，正在为你更换。</li>
+</ul>
+<p>按钮文案也要随语言切换，不要写死中文「立即联系」。</p>
+<h4 id="8-2-1-用户语言">8.2.1 用户语言 【本次更新】</h4>
+<p>用户侧文案（欢迎语、分配中、立即联系按钮、打开链接、忙线、换号）按 <strong>用户 Telegram 客户端语言</strong> 自动切换，不按机器人实例国家，也不按广告设备 IP 国家。</p>
+<p>判定：</p>
+<ol>
+<li>每次 Start、点按钮、发消息，都读 Telegram <code>from.language_code</code>，例如 <code>zh</code>、<code>zh-hans</code>、<code>id</code>、<code>vi</code>、<code>en</code>。</li>
+<li>先全量小写，再按前缀匹配语言包：<code>zh-hant</code> / <code>zh-tw</code> / <code>zh-hk</code> → 繁中；其余 <code>zh*</code> → 简中；<code>id</code> → 印尼语；<code>vi</code> → 越南语；<code>th</code> → 泰语；<code>ms</code> → 马来语；<code>en*</code> 及其他未覆盖 → 英文。</li>
+<li><code>language_code</code> 为空或未识别：用英文。不要因此拒绝 Start 或改分号。</li>
+<li>同一用户改了 Telegram 语言，下一句就换语言。不必存「用户语言」才能分号。</li>
+<li>管理员命令、号池告警保持中文。语言只影响对广告用户的文案。</li>
+<li>不要把 <code>language_code</code> 传给中台，也不要写进 Adjust。</li>
+</ol>
+<p>V1 内置：英文（默认）、简体中文、繁体中文、印尼语、越南语、泰语、马来语。运营可后补文案，但匹配规则不变。</p>
+<p>英文底稿：</p>
+<ul>
+<li>Assigning a customer service agent…</li>
+<li>A dedicated agent has been assigned. Tap the button below to start.</li>
+<li>Tap to open the chat:</li>
+<li>All agents are busy. Please try again later.</li>
+<li>Your previous agent is unavailable. Assigning a new one.</li>
+<li>按钮：Contact now</li>
+</ul>
+<p>机器人用户侧：</p>
+<pre><code>/start
+------------------------------
+已为你分配专属客服。
+请点击下方按钮开始咨询。
+
+        [ 立即联系 ]
+------------------------------
+（点击后）
+请点击打开客服对话：
+https://t.me/cs_sg_02</code></pre>
+<h3 id="8-3-分配算法">8.3 分配算法</h3>
+<p>按顺序，不许跳步。自然客服、非归因会话也走同一套分号，只是后续不调中台。</p>
+<p><strong>库不可用时不要进入本算法。</strong> 直接按用户语言回「客服正在接入」，告警管理员，允许用户再次 Start。兜底号在库里，库挂了读不到，禁止在库失败时「用兜底号」。</p>
+<ol>
+<li>该 <code>telegram_user_id</code> 7 天内原号仍启用 → 回原号，忽略在班和上限。
+<ul>
+<li>会话未关闭：不 +today_assigned，不 +open_chats，不清 connected，不调 connect。</li>
+<li>会话已 <code>/cs_close</code> 但粘性仍有效：不 +today_assigned，open_chats +1，仍不清 connected，不调 connect。</li>
+<li>连续 <code>/start</code> 只更新入口 click_id，客服号不变。</li>
+</ul>
+</li>
+<li>过滤：启用，且今日已分配 &lt; 当日上限，且当前会话 &lt; 同时接待上限。</li>
+<li>过滤结果里有在班号，只在在班里选；全离班则在离班里选，不要把用户挂起。<strong>只要本步最终分到离班号，就告警管理员</strong>（在班全满或当前没有在班号都要告）。这是 B7。</li>
+<li>排序：<code>today_assigned</code> 升序，再 <code>open_chats</code> 升序，再 <code>last_assigned_at</code> 升序。</li>
+<li>没人则先放开同时接待上限，再放开当日上限，再用兜底号。每放宽一层告警管理员。兜底号只在这一步、且库正常时使用。</li>
+<li>还没有：按用户语言回复「客服正在接入」等价文案，pending，告警。允许用户再次 Start。</li>
+</ol>
+<p>只有新分配才 today_assigned +1 且 open_chats +1，connected 从 false 开始。粘性回访不是新分配。</p>
+<p>并发用条件更新，避免超发当日上限。</p>
+<p>广告点击未 Start，<strong>不得</strong>占用 <code>today_assigned</code>。</p>
+<p>同一 Telegram 用户连续多次 <code>/start</code>，以最后一次合法且未被他人占用的 <code>click_id</code> 更新本次入口，客服号仍走粘性，不反复换号，不清 connected。</p>
+<p>原号被停用后再 Start，走新客规则。</p>
+<p><code>open_chats</code> 在管理员 <code>/cs_close @username &lt;tg_user_id&gt;</code> 或粘性到期时减 1。V1 不做客服侧「新用户来了」通知。</p>
+<h3 id="8-4-管理员命令">8.4 管理员命令</h3>
+<p>仅白名单 Telegram 用户。普通用户发命令不回号池，不泄露名单。</p>
+<p>部署配置必须拆两份：<code>cs_admins</code>（号池管理员）和 <code>cs_super_admins</code>（超级管理员）。超级管理员自动具备号池权限，并独享 <code>/cs_admins</code>。V1 不在机器人里增删管理员，改名单走部署配置。<code>cs_super_admins</code> 为空则该命令无人可执行，部署时必须配。</p>
+<table><thead><tr><th>命令</th><th>作用</th><th>示例</th></tr></thead><tbody>
+<tr><td><code>/cs_add @username 40 30</code></td><td>新增。参数为当日上限、同时接待上限。新号默认启用、离班</td><td><code>/cs_add @cs_sg_02 40 30</code></td></tr>
+<tr><td><code>/cs_on @username</code></td><td>在班</td><td><code>/cs_on @cs_sg_02</code></td></tr>
+<tr><td><code>/cs_off @username</code></td><td>离班</td><td><code>/cs_off @cs_sg_02</code></td></tr>
+<tr><td><code>/cs_enable @username</code></td><td>启用</td><td><code>/cs_enable @cs_sg_02</code></td></tr>
+<tr><td><code>/cs_disable @username</code></td><td>停用，需确认。熟客下次重分</td><td><code>/cs_disable @cs_sg_02</code></td></tr>
+<tr><td><code>/cs_cap @username 40 30</code></td><td>改上限</td><td><code>/cs_cap @cs_sg_02 50 30</code></td></tr>
+<tr><td><code>/cs_fallback @username</code></td><td>设兜底号，需确认。一实例只能一个兜底</td><td><code>/cs_fallback @cs_sg_backup</code></td></tr>
+<tr><td><code>/cs_list</code></td><td>号池状态</td><td><code>/cs_list</code></td></tr>
+<tr><td><code>/cs_close @username &lt;tg_user_id&gt;</code></td><td>关闭会话，<code>open_chats-1</code></td><td><code>/cs_close @cs_sg_02 123456789</code></td></tr>
+<tr><td><code>/cs_admins</code></td><td>查看管理员和超级管理员名单，仅超级管理员</td><td><code>/cs_admins</code></td></tr>
+</tbody></table>
+<p>用户名统一存不含 <code>@</code> 的 Telegram username，大小写不敏感。</p>
+<p>加号时尽量 <code>getChat</code> 校验；失败允许入库，标记「未校验」。</p>
+<p>默认上限 40/30，运营可改。当日清零按实例时区，默认 <code>Asia/Singapore</code>。</p>
+<p>停用号、删除号、更换兜底号要二次确认。</p>
+<h3 id="8-5-号池字段">8.5 号池字段</h3>
+<table><thead><tr><th>字段名</th><th>类型</th><th>必填</th><th>默认值</th><th>规则</th></tr></thead><tbody>
+<tr><td>cs_account</td><td>string</td><td>是</td><td>无</td><td>Telegram username，实例内唯一</td></tr>
+<tr><td>daily_cap</td><td>int</td><td>是</td><td>40</td><td>1～999</td></tr>
+<tr><td>concurrent_cap</td><td>int</td><td>是</td><td>30</td><td>1～999</td></tr>
+<tr><td>today_assigned</td><td>int</td><td>是</td><td>0</td><td>按实例时区零点清零</td></tr>
+<tr><td>open_chats</td><td>int</td><td>是</td><td>0</td><td>已分配未关闭的会话数</td></tr>
+<tr><td>online</td><td>bool</td><td>是</td><td>false</td><td>在班/离班</td></tr>
+<tr><td>enabled</td><td>bool</td><td>是</td><td>true</td><td>启用/停用</td></tr>
+<tr><td>is_fallback</td><td>bool</td><td>是</td><td>false</td><td>同一实例只能一个兜底号</td></tr>
+<tr><td>verified</td><td>bool</td><td>是</td><td>视校验结果</td><td>未校验也可用于分配</td></tr>
+<tr><td>last_assigned_at</td><td>datetime</td><td>否</td><td>空</td><td>并列时挑最久没分到的</td></tr>
+</tbody></table>
+<p>机器人本地至少三张表：客服号、粘性（telegram_user_id → cs_account）、会话（click_id、占用者、是否已建联、上报状态）。</p>
+<p>不要把号池写进中台。</p>
+<h3 id="8-6-上报中台">8.6 上报中台</h3>
+<p>用户点「立即联系」且本会话是归因会话、有合法 <code>click_id</code>、本地尚未 <code>connected</code> 时，调用 <code>POST /v1/cs/connect</code>。</p>
+<p>禁止调用：自然客服、占用 click_id 的后来者、粘性回访且本地已 connected。占用校验以机器人为准先拦截；中台 <code>attributed=false</code> 只作并发兜底。</p>
+<p>可选同时调 <code>POST /v1/cs/start</code>：仅归因会话在 Start 成功分配后调用一次，只记漏斗。</p>
+<p>业务结果按 HTTP 200 + body 处理：<code>attributed=true</code> 标 connected；<code>attributed=false</code> 仍接待不重试；<code>duplicate=true</code> 当已建联。不要把 409 写成必须分支；若中台误返回 409，按 duplicate 处理。</p>
+<p>上报失败：用户仍收到客服链接。本地 <code>report_failed</code>，重试 5s / 30s / 5min，共 3 次。签名 4xx 不要盲重试，直接告警。超时 3 秒视为失败。</p>
+<p>禁止上传：GAID、广告 ID、白包 app_id、聊天内容、手机号。</p>
+<p>能力上限必须写进验收：机器人能确认用户愿意打开被分配的客服号；<strong>不能</strong>确认用户已经给该客服发了第一句话。</p>
+</section>
+<section id="9-Adjust-与买量">
+<h2 id="9-Adjust-与买量">9. Adjust 与买量</h2>
+<ol>
+<li>在 <strong>白包</strong> Adjust 新建事件，例如 <code>cs_connect</code>，把 Event Token 填进白包「建联事件Key」。</li>
+<li>Facebook / Google 可按建联和/或付费优化。同一白包两种事件都可能出现。不要映射注册。</li>
+<li>不要用首充/付费 Token 打建联，不要传 1.99 冒充付费。</li>
+<li>应用拉活转化仍打 B 包安装、首充、付费；客服建联只打建联事件。二者不是互斥模式，不要做成「客服模式关闭付费回传」。</li>
+</ol>
+</section>
+<section id="10-关键页面对照">
+<h2 id="10-关键页面对照">10. 关键页面对照</h2>
+<p>后台以本目录原型 v9 为准。</p>
+<pre><code>白包列表
++--------------------------------------------------+
+| A2test | 拉活+建联 | N 开屏3/Banner1/激励0 | 付费 $0.13 | 建联 5 |
+| A1test | 应用拉活   | N 5/5/5                 | 付费 $10.06 | 建联 0 |
++--------------------------------------------------+
+
+客服素材
++--------------------------------------------------+
+| 类型 [开屏]  出价 [1.2]                           |
+| 跳转URL [https://t.me/sg_cs_bot]                  |
+| 国家 [SG]  MCC [525]                              |
++--------------------------------------------------+
+
+账户编辑 【本次更新】
++--------------------------------------------------+
+| 用户名 [b2ops]  角色 [运营]                       |
+| 数据范围 ( ) 全部投放  (•) 指定投放               |
+|   [x] com.demo2b.app.b2                           |
++--------------------------------------------------+</code></pre>
+</section>
+<section id="11-非功能性需求">
+<h2 id="11-非功能性需求">11. 非功能性需求</h2>
+<ul>
+<li>性能：下发接口在现有超时内完成跨投放比价。机器人 Start 2 秒内回分配结果。</li>
+<li>权限：后台不新增角色类型。功能权限沿用现网模块勾选；账户增加投放数据范围。机器人部署配置拆 <code>cs_admins</code> 和 <code>cs_super_admins</code> 两份 Telegram 白名单。</li>
+<li>机器人语言：用户侧按 Telegram <code>language_code</code> 自动切换，未覆盖用英文。管理员命令仍中文。</li>
+<li>兼容：现网应用拉活逻辑保持。废弃白包 type 字段后，旧数据按「无类型」处理，只看关联投放。</li>
+<li>数据安全：签名密钥、Bot Token 只放服务端。日志可留 <code>click_id</code>、username，聊天正文默认不落库。S2S 不传 Telegram 资料。</li>
+<li>数据存储：机器人独立库。中台增加 click_id、cs_connect_log、cs_start_log、pending。不要在中台建号池表。</li>
+<li>可靠性：点击上报沿用现有离线队列。connect pending 48 小时。Webhook 收消息；Telegram 重复推送按 <code>update_id</code> 幂等。机器人库失败直接回「客服正在接入」并告警，不读号池/兜底号。</li>
+<li>多实例：一个国家一个机器人，各用自己的 Bot Token 和号池。配置不要写死成单例全局号池。</li>
+<li>时区：当日上限按实例配置时区清零，默认 <code>Asia/Singapore</code>。</li>
+<li>本次不做 iOS 白包 SDK。</li>
+</ul>
+</section>
+<section id="12-范围与非目标">
+<h2 id="12-范围与非目标">12. 范围与非目标</h2>
+<p>本次做：</p>
+<ul>
+<li>去掉白包自有广告类型，支持同一白包混合投放</li>
+<li>后台客服投放/素材/N/报表/建联 Event Key</li>
+<li>SDK <code>click_id</code> 与机器人跳转；老版本排除客服素材</li>
+<li>机器人号池、分号、立即联系、报中台</li>
+<li>中台 start/connect、pending、去重、S2S</li>
+<li>客服统计展示/点击/建联</li>
+<li>账户级 B 包/投放数据范围，子账户只能看授权投放相关数据</li>
+</ul>
+<p>本次不做：</p>
+<ul>
+<li>WhatsApp</li>
+<li>独立客服广告位</li>
+<li>中台里做客服号分配</li>
+<li>机器人内坐席工作台、独立 Web 管号后台</li>
+<li>把 GAID 放进 start，或把聊天内容打到 Adjust</li>
+<li>伪造付费金额</li>
+<li>给客服号推「新用户来了」</li>
+<li>用白包类型做投放开关</li>
+<li>按白包、国家或 MCC 做账号数据隔离</li>
+<li>子账户自己给自己扩权或新增未授权投放</li>
+</ul>
+<p>能力上限：</p>
+<ul>
+<li>渠道可以按「白包买量用户确认联系了客服」优化。</li>
+<li>渠道不能确认「用户已经开口」或「客服已经回复」。</li>
+<li>同一广告位一次只出一条自有广告；混合是「不同广告位 / 不同次数」可以出不同类型，不是一条广告里同时出两个。</li>
+</ul>
+</section>
+<section id="13-验收标准">
+<h2 id="13-验收标准">13. 验收标准</h2>
+<p>后台与投放：</p>
+<table><thead><tr><th>编号</th><th>场景</th><th>期望</th></tr></thead><tbody>
+<tr><td>A1</td><td>编辑白包</td><td>没有自有广告类型；能填三个 N 和全套 Adjust Key（含建联）；没有客服素材按钮</td></tr>
+<tr><td>A2</td><td>B 包管理新增客服投放并配素材</td><td>跳转只能用 t.me 机器人；国家 MCC 在素材上</td></tr>
+<tr><td>A3</td><td>同一白包同时关联应用拉活和客服建联</td><td>两边都显示投放中，不要标记未投放</td></tr>
+<tr><td>A4</td><td>同一广告位，拉活素材和客服素材都命中</td><td>出价高者下发，不管类型</td></tr>
+<tr><td>A5</td><td>开屏客服出价高、Banner 拉活出价高</td><td>开屏出客服，Banner 出拉活</td></tr>
+<tr><td>A6</td><td>国家或 MCC 不命中</td><td>该素材不参与竞争；该位若无其他命中则 AdMob</td></tr>
+<tr><td>A7</td><td>测试设备</td><td>跳过定向和频次，仍跨类型比价</td></tr>
+<tr><td>A8</td><td>客服投放看广告数据</td><td>只有展示、点击、建联</td></tr>
+<tr><td>A9</td><td>白包列表 / 看板</td><td>同一白包可同时有付费和建联；付费不含客服，建联不含应用拉活</td></tr>
+<tr><td>A10</td><td>停用某条客服投放</td><td>该投放不再下发；同白包上的应用拉活不受影响；数据保留</td></tr>
+<tr><td>A11</td><td>老 SDK 请求已配客服的白包</td><td>不下发客服素材，应用拉活仍可下发</td></tr>
+<tr><td>A12</td><td>超管编辑账户</td><td>角色下可配「全部投放 / 指定投放」；超管自己必须全部投放</td></tr>
+<tr><td>A13</td><td>给 b2ops 只授权 B2</td><td>登录后 B 包列表只有 B2；看不到 B1 和客服-东南亚</td></tr>
+<tr><td>A14</td><td>b2ops 看看板和白包</td><td>只汇总 B2；白包列表只有关联了 B2 的白包，付费/建联不含其他投放</td></tr>
+<tr><td>A15</td><td>b2ops 打开未授权投放 ID</td><td>后台提示无权限，接口不得返回数据</td></tr>
+<tr><td>A16</td><td>b2ops 编辑白包 N / Adjust</td><td>不可编辑。白包全局配置只给全部投放账户</td></tr>
+<tr><td>A17</td><td>b2ops 新增投放</td><td>无入口。新投放需超管创建并授权</td></tr>
+<tr><td>A18</td><td>运营角色无账户权限</td><td>子账户看不到账户管理、角色管理，不能改自己的数据范围</td></tr>
+</tbody></table>
+<p>SDK + 机器人 + 回传：</p>
+<table><thead><tr><th>编号</th><th>场景</th><th>期望</th></tr></thead><tbody>
+<tr><td>B1</td><td>点客服广告</td><td>打开 <code>t.me/bot?start=click_id</code>；中台 click 日志有同一 click_id</td></tr>
+<tr><td>B2</td><td>用户 Start 后点立即联系</td><td>收到客服号链接；中台一条建联；配置齐全时白包 Adjust 一次建联事件、无金额</td></tr>
+<tr><td>B3</td><td>同一 click_id 再点立即联系</td><td>可再发链接；中台和 Adjust 不重复</td></tr>
+<tr><td>B4</td><td>同一 Telegram 用户 7 天内再来</td><td>仍是原客服号；未关闭则 today_assigned/open_chats 不增加；不清 connected；不再调 connect</td></tr>
+<tr><td>B5</td><td>原号停用后再 Start</td><td>分到其他启用号</td></tr>
+<tr><td>B6</td><td>两在班号已分配不同</td><td>新客给已分配更少的</td></tr>
+<tr><td>B7</td><td>在班全满、有离班号</td><td>分给离班号，管理员告警</td></tr>
+<tr><td>B8</td><td>无 start / 非法 start</td><td>可分号，不调 connect</td></tr>
+<tr><td>B9</td><td>第二个 Telegram 用户用已占用 click_id</td><td>可接待，不调 start/connect</td></tr>
+<tr><td>B10</td><td>中台 5xx</td><td>用户仍收到链接；机器人重试</td></tr>
+<tr><td>B11</td><td>广告点击但未 Start</td><td>该号今日已分配不增加</td></tr>
+<tr><td>B12</td><td>connect 早于 click 日志</td><td>中台 pending，日志到后补归因</td></tr>
+<tr><td>B13</td><td>非管理员 /cs_list</td><td>看不到号池</td></tr>
+<tr><td>B14</td><td>未填建联 Event Key</td><td>建联可落库，Adjust 无事件</td></tr>
+<tr><td>B15</td><td>应用拉活广告点击</td><td>不拼 start，不走机器人协议</td></tr>
+<tr><td>B16</td><td>同一白包先建联后 B 包付费</td><td>建联事件和付费事件都能打到该白包 Adjust</td></tr>
+<tr><td>B17</td><td>Telegram 语言为 id / zh / 空</td><td>印尼语用户看到印尼语文案；简中用户看到中文；无 language_code 看到英文。新加坡机器人也按用户语言，不按实例锁中文</td></tr>
+<tr><td>B18</td><td>机器人库不可用</td><td>回复「客服正在接入」，告警；不读号池、不用兜底号</td></tr>
+<tr><td>B19</td><td>普通管理员 /cs_admins</td><td>无权限。超级管理员能看到两份名单</td></tr>
+</tbody></table>
+</section>
+<section id="14-实现分工">
+<h2 id="14-实现分工">14. 实现分工</h2>
+<table><thead><tr><th>工作</th><th>负责人</th><th>产出</th></tr></thead><tbody>
+<tr><td>去掉白包类型、N、客服投放、素材、报表、建联 Event Key、账户数据范围</td><td>中台后台</td><td>对照本目录原型 v9 改现网</td></tr>
+<tr><td>下发跨类型比价、<code>ad_kind</code>、老 SDK 排除客服、click_id 入库、start/connect、pending、S2S</td><td>中台服务</td><td>接口与去重</td></tr>
+<tr><td>点击生成 click_id、打开带 start 的机器人</td><td>SDK</td><td>新版本；老版本由中台排除客服素材</td></tr>
+<tr><td>BotFather 建各国机器人</td><td>运营</td><td>bot username + Token</td></tr>
+<tr><td>Start、号池、分号、立即联系、上报</td><td>机器人开发</td><td>可多实例部署</td></tr>
+<tr><td>白包 Adjust 新建联事件并映射渠道</td><td>Adjust + 买量</td><td>Token 交给中台运营</td></tr>
+<tr><td>素材填对应国家机器人 URL</td><td>中台运营</td><td>不要填私人号</td></tr>
+<tr><td>联调验收</td><td>测试</td><td>第 13 节全过</td></tr>
+</tbody></table>
+</section>
+<section id="15-待补充-不阻塞开发">
+<h2 id="15-待补充-不阻塞开发">15. 待补充（不阻塞开发）</h2>
+<ol>
+<li>各语言包欢迎语终稿（id/vi/th/ms 等）。开发先用 8.2 中英底稿，未覆盖语言先出英文。语言切换规则已锁定，不阻塞开发。</li>
+<li>中台域名、HMAC secret、各 bot Token：部署时提供。</li>
+<li>现网 SDK 版本号里，从哪一版开始支持 <code>start</code>。中台用该阈值排除老包客服素材。</li>
+</ol>
+</section>
+<section id="附录-A-和旧口径的差异">
+<h2 id="附录-A-和旧口径的差异">附录 A：和旧口径的差异</h2>
+<table><thead><tr><th>旧口径（v6/v7、V1.0/V1.2）</th><th>本文 V1.3</th></tr></thead><tbody>
+<tr><td>白包选自有广告类型，B 包与客服互斥</td><td>取消白包类型；同一白包可混合投放</td></tr>
+<tr><td>类型不一致 → 未投放</td><td>关联启用白包即投放</td></tr>
+<tr><td>客服模式不打付费/B包安装</td><td>哪种转化发生打哪种</td></tr>
+<tr><td>建联=点击后拉起 WhatsApp/Telegram</td><td>建联=机器人「立即联系」</td></tr>
+<tr><td>素材可填 wa.me / 私人 t.me</td><td>只填国家对应机器人</td></tr>
+<tr><td>号池在中台或未定义</td><td>号池只在机器人</td></tr>
+<tr><td>账号只有角色功能权限，能看全部投放</td><td>角色管菜单/操作，账户可指定投放数据范围</td></tr>
+<tr><td>欢迎语按机器人实例配语言</td><td>按用户 Telegram <code>language_code</code> 自动切换，未覆盖用英文</td></tr>
+</tbody></table>
+<p>旧原型目录 <code>2026-10-26-客服广告建联</code> 不要再给开发。</p>
+<p>独立文件 <code>Telegram客服机器人需求文档.md</code> 的内容已并入第 8 节，开发以本文为准。</p>
+</section>
+<section id="附录-B-老板确认记录">
+<h2 id="附录-B-老板确认记录">附录 B：老板确认记录</h2>
+<p>确认日期：2026-10-26 ～ 2026-10-27</p>
+<ol>
+<li>客服广告混在开屏/Banner/激励，不新增独立广告位。</li>
+<li><strong>更正：</strong> 自有广告不再二选一。一个白包可同时分发应用拉活和客服建联，按广告位出价竞争。</li>
+<li>客服投放和素材放在 B 包管理，国家/MCC 配在素材上。</li>
+<li>跳转 Telegram 机器人，由机器人分配客服账号。</li>
+<li>建联后机器人报中台，中台 S2S 白包 Adjust。</li>
+<li>中台不分号。</li>
+<li>一个国家一个机器人。</li>
+<li>本次不做 WhatsApp，不做机器人内工作台。</li>
+<li>【本次更新】后台增加 B 包子账户：给指定投放配子账户，只能看对应投放的相关数据。角色权限沿用现网。</li>
+<li>【本次更新】机器人用户语文案按 Telegram 环境语言自动切换，不再按机器人实例写死。</li>
+</ol>
+</section>
+</main>
+<footer>开发只看本目录：需求文档 V1.3 + 原型 index.html v9。旧目录 2026-10-26 和独立机器人文档不再作为开发口径。</footer>
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: "neutral",
+    securityLevel: "loose",
+    flowchart: { htmlLabels: false, curve: "basis", useMaxWidth: true }
+  });
+  await mermaid.run({ querySelector: ".mermaid" });
+</script>
+</body>
+</html>
