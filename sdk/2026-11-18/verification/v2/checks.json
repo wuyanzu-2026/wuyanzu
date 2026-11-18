@@ -1,0 +1,244 @@
+{
+  "date": "2026-11-18",
+  "version": "v2",
+  "method": "Browser UI interactions with DOM read-back",
+  "passed": 59,
+  "checks": [
+    {
+      "name": "B包编辑提供国家与客服跳转配置",
+      "passed": true
+    },
+    {
+      "name": "国家支持多选和取消单项",
+      "passed": true
+    },
+    {
+      "name": "国家支持按代码搜索",
+      "passed": true
+    },
+    {
+      "name": "B包列表展示保存后的多国家",
+      "passed": true
+    },
+    {
+      "name": "全部素材统一继承B包多国家",
+      "passed": true
+    },
+    {
+      "name": "素材查看入口指向所属B包无需选择白包",
+      "passed": true
+    },
+    {
+      "name": "素材编辑无国家及地址输入且展示继承范围",
+      "passed": true
+    },
+    {
+      "name": "新增素材不配置国家和地址",
+      "passed": true
+    },
+    {
+      "name": "新增素材保存后自动继承国家",
+      "passed": true
+    },
+    {
+      "name": "查看统一配置直接打开正确B包",
+      "passed": true
+    },
+    {
+      "name": "清空所有国家展示全球",
+      "passed": true
+    },
+    {
+      "name": "取消B包国家修改返回素材且保留原范围",
+      "passed": true
+    },
+    {
+      "name": "空国家允许保存并由全部素材继承全球",
+      "passed": true
+    },
+    {
+      "name": "修改一个B包不影响共享白包的其他B包",
+      "passed": true
+    },
+    {
+      "name": "白包编辑彻底移除统一跳转页签和地址字段",
+      "passed": true
+    },
+    {
+      "name": "白包原有渠道与事件字段保留",
+      "passed": true
+    },
+    {
+      "name": "白包独立统计不受B包配置改动影响",
+      "passed": true
+    },
+    {
+      "name": "其他类型的B包允许多条已安装地址",
+      "passed": true
+    },
+    {
+      "name": "B包地址支持删除",
+      "passed": true
+    },
+    {
+      "name": "切换TG机器人清空全部已安装地址并限制一个空框",
+      "passed": true
+    },
+    {
+      "name": "切换TG机器人完整保留未安装组",
+      "passed": true
+    },
+    {
+      "name": "取消B包编辑还原类型及原地址",
+      "passed": true
+    },
+    {
+      "name": "B包保存不限制跳转地址格式",
+      "passed": true
+    },
+    {
+      "name": "保存后机器人空地址规则及未安装组保留",
+      "passed": true
+    },
+    {
+      "name": "应用拉活B包只显示唯一地址且不区分TG类型",
+      "passed": true
+    },
+    {
+      "name": "应用拉活也使用B包国家配置且默认全球",
+      "passed": true
+    },
+    {
+      "name": "应用拉活唯一地址允许留空保存",
+      "passed": true
+    },
+    {
+      "name": "对应B包已安装组为空不跨组兜底不上报",
+      "passed": true
+    },
+    {
+      "name": "应用拉活空地址不跳转不上报",
+      "passed": true
+    },
+    {
+      "name": "分流演示按B包选择类型而非白包配置",
+      "passed": true
+    },
+    {
+      "name": "分配请求中展示加载并禁用重复点击",
+      "passed": true
+    },
+    {
+      "name": "未安装TG的客服跳转使用B包地址并上报",
+      "passed": true
+    },
+    {
+      "name": "同一B包连续点击均重新请求且返回组内一条地址",
+      "passed": true
+    },
+    {
+      "name": "同一B包不同来源白包共用同一机器人地址",
+      "passed": true
+    },
+    {
+      "name": "已安装TG的客服跳转不上报app_click_wa",
+      "passed": true
+    },
+    {
+      "name": "unknown沿用未安装分组并上报",
+      "passed": true
+    },
+    {
+      "name": "unreported沿用未安装分组并上报",
+      "passed": true
+    },
+    {
+      "name": "其他类型已安装组多地址分配且B包之间隔离",
+      "passed": true
+    },
+    {
+      "name": "其他类型未安装组同样触发客服点击事件",
+      "passed": true
+    },
+    {
+      "name": "分配失败静默且不上报事件",
+      "passed": true
+    },
+    {
+      "name": "应用拉活yes固定唯一B包地址且不上报",
+      "passed": true
+    },
+    {
+      "name": "应用拉活no固定唯一B包地址且不上报",
+      "passed": true
+    },
+    {
+      "name": "R-001规则反向定位正确页面及目标",
+      "passed": true
+    },
+    {
+      "name": "R-002规则反向定位正确页面及目标",
+      "passed": true
+    },
+    {
+      "name": "R-003规则反向定位正确页面及目标",
+      "passed": true
+    },
+    {
+      "name": "R-004规则反向定位正确页面及目标",
+      "passed": true
+    },
+    {
+      "name": "R-005规则反向定位正确页面及目标",
+      "passed": true
+    },
+    {
+      "name": "R-006规则反向定位正确页面及目标",
+      "passed": true
+    },
+    {
+      "name": "R-007规则反向定位正确页面及目标",
+      "passed": true
+    },
+    {
+      "name": "R-008规则反向定位正确页面及目标",
+      "passed": true
+    },
+    {
+      "name": "R-009规则反向定位正确页面及目标",
+      "passed": true
+    },
+    {
+      "name": "R-010规则反向定位正确页面及目标",
+      "passed": true
+    },
+    {
+      "name": "R-011规则反向定位正确页面及目标",
+      "passed": true
+    },
+    {
+      "name": "R-012规则反向定位正确页面及目标",
+      "passed": true
+    },
+    {
+      "name": "R-013规则反向定位正确页面及目标",
+      "passed": true
+    },
+    {
+      "name": "国家规则左侧标记定位右侧卡片",
+      "passed": true
+    },
+    {
+      "name": "十三条规则编号唯一且无孤立标记",
+      "passed": true
+    },
+    {
+      "name": "客服B包两组地址均为空也可保存",
+      "passed": true
+    },
+    {
+      "name": "客服B包全空不使用素材旧地址且不上报",
+      "passed": true
+    }
+  ]
+}

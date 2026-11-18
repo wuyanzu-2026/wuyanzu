@@ -1,0 +1,183 @@
+{
+  "date": "2026-11-18",
+  "method": "Browser UI interactions with DOM read-back",
+  "passed": 44,
+  "checks": [
+    {
+      "name": "非URL格式地址可保存",
+      "passed": true
+    },
+    {
+      "name": "其他类型允许删除全部已安装组地址",
+      "passed": true
+    },
+    {
+      "name": "地址组支持重新添加",
+      "passed": true
+    },
+    {
+      "name": "机器人切换清空已安装组且最多一个输入框",
+      "passed": true
+    },
+    {
+      "name": "机器人切换保留未安装组",
+      "passed": true
+    },
+    {
+      "name": "取消后已保存类型与地址不变",
+      "passed": true
+    },
+    {
+      "name": "所有地址为空仍可保存",
+      "passed": true
+    },
+    {
+      "name": "请求中显示加载并禁用重复点击",
+      "passed": true
+    },
+    {
+      "name": "未安装TG客服跳转触发app_click_wa",
+      "passed": true
+    },
+    {
+      "name": "返回地址属于未安装组",
+      "passed": true
+    },
+    {
+      "name": "连续点击均重新请求且只返回一条组内地址",
+      "passed": true
+    },
+    {
+      "name": "TG机器人已安装用户固定地址且不上报",
+      "passed": true
+    },
+    {
+      "name": "unknown按未安装分配且上报",
+      "passed": true
+    },
+    {
+      "name": "unreported按未安装分配且上报",
+      "passed": true
+    },
+    {
+      "name": "应用拉活yes固定唯一地址且不上报",
+      "passed": true
+    },
+    {
+      "name": "应用拉活no固定唯一地址且不上报",
+      "passed": true
+    },
+    {
+      "name": "请求失败不跳转不上报",
+      "passed": true
+    },
+    {
+      "name": "无地址时不提示不跳转不上报",
+      "passed": true
+    },
+    {
+      "name": "已安装组为空不使用另一组地址兜底",
+      "passed": true
+    },
+    {
+      "name": "素材列表使用App统一分配而非独立URL",
+      "passed": true
+    },
+    {
+      "name": "素材编辑保留素材国家出价且没有URL输入",
+      "passed": true
+    },
+    {
+      "name": "关联多App时可定位指定来源App配置",
+      "passed": true
+    },
+    {
+      "name": "取消App编辑返回原素材列表",
+      "passed": true
+    },
+    {
+      "name": "R-001右侧反向定位",
+      "passed": true
+    },
+    {
+      "name": "R-002右侧反向定位",
+      "passed": true
+    },
+    {
+      "name": "R-003右侧反向定位",
+      "passed": true
+    },
+    {
+      "name": "R-004右侧反向定位",
+      "passed": true
+    },
+    {
+      "name": "R-005右侧反向定位",
+      "passed": true
+    },
+    {
+      "name": "R-006右侧反向定位",
+      "passed": true
+    },
+    {
+      "name": "R-007右侧反向定位",
+      "passed": true
+    },
+    {
+      "name": "R-008右侧反向定位",
+      "passed": true
+    },
+    {
+      "name": "R-009右侧反向定位",
+      "passed": true
+    },
+    {
+      "name": "R-010右侧反向定位",
+      "passed": true
+    },
+    {
+      "name": "R-011右侧反向定位",
+      "passed": true
+    },
+    {
+      "name": "R-012右侧反向定位",
+      "passed": true
+    },
+    {
+      "name": "左侧编号定位右侧规则",
+      "passed": true
+    },
+    {
+      "name": "规则唯一且所有标记有对应目标",
+      "passed": true
+    },
+    {
+      "name": "筛选无结果展示空状态",
+      "passed": true
+    },
+    {
+      "name": "现有状态筛选可用",
+      "passed": true
+    },
+    {
+      "name": "各App统计人数守恒且零用户占比为横线",
+      "passed": true
+    },
+    {
+      "name": "其他类型已安装组支持多条分配且不上报",
+      "passed": true
+    },
+    {
+      "name": "未安装组单条固定返回并触发事件",
+      "passed": true
+    },
+    {
+      "name": "保存后机器人类型清空结果与未安装组均持久到本页面",
+      "passed": true
+    },
+    {
+      "name": "保留原有事件配置且不增加app_click_wa字段",
+      "passed": true
+    }
+  ]
+}

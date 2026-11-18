@@ -1,0 +1,328 @@
+{
+  "date": "2026-11-18",
+  "version": "v4",
+  "method": "Browser UI interactions with DOM read-back; includes test-backend field parity audit and disclosure of unchanged workflows",
+  "passed": 80,
+  "checks": [
+    {
+      "name": "白包保留原独立名称包名及既有字段",
+      "passed": true
+    },
+    {
+      "name": "仅移除已确认白包展示点击两列",
+      "passed": true
+    },
+    {
+      "name": "四个广告位各自频次未合并省略",
+      "passed": true
+    },
+    {
+      "name": "字段对照说明可从原型访问",
+      "passed": true
+    },
+    {
+      "name": "白包明细完整显示六项按日字段",
+      "passed": true
+    },
+    {
+      "name": "每日TG两组之和等于该日新安装",
+      "passed": true
+    },
+    {
+      "name": "TG占比以新增而非日活或累计安装为分母",
+      "passed": true
+    },
+    {
+      "name": "新增TG字段不改变区间新增合计",
+      "passed": true
+    },
+    {
+      "name": "日期查询后TG指标正确同步单日新增群体",
+      "passed": true
+    },
+    {
+      "name": "零新增日期两组为零且TG占比为横线",
+      "passed": true
+    },
+    {
+      "name": "白包原Logo上传包名AppId商店地址状态均可找到",
+      "passed": true
+    },
+    {
+      "name": "全部原有渠道和事件字段保留",
+      "passed": true
+    },
+    {
+      "name": "原有八个频次输入和十三次开屏示例保留",
+      "passed": true
+    },
+    {
+      "name": "B包原表头完整保留并增加国家范围",
+      "passed": true
+    },
+    {
+      "name": "B包原应用投放类型名称状态筛选均保留",
+      "passed": true
+    },
+    {
+      "name": "B包素材列显示逐素材出价而非仅数量",
+      "passed": true
+    },
+    {
+      "name": "应用拉活完整保留Logo包名商店地址标识关联应用",
+      "passed": true
+    },
+    {
+      "name": "客服建联原投放名称Logo投放类型保留",
+      "passed": true
+    },
+    {
+      "name": "B包日报展示次数人数点击次数人数及建联总新老",
+      "passed": true
+    },
+    {
+      "name": "每日报表次数不小于对应去重人数",
+      "passed": true
+    },
+    {
+      "name": "重复事件只增加次数不重复累计人数",
+      "passed": true
+    },
+    {
+      "name": "每日建联总等于新加老且互斥",
+      "passed": true
+    },
+    {
+      "name": "原白包活跃人数和人均展示字段及计算保留",
+      "passed": true
+    },
+    {
+      "name": "原B包选择广告位多选四粒度和趋势区均保留",
+      "passed": true
+    },
+    {
+      "name": "重复建联事件按人数去重示例可核对",
+      "passed": true
+    },
+    {
+      "name": "当天安装当天建联为新",
+      "passed": true
+    },
+    {
+      "name": "昨日安装今日建联为老",
+      "passed": true
+    },
+    {
+      "name": "历史安装当天首次建联仍是老",
+      "passed": true
+    },
+    {
+      "name": "B包查询加载期间禁用重复输入",
+      "passed": true
+    },
+    {
+      "name": "查询范围不改变日报建联新老分类",
+      "passed": true
+    },
+    {
+      "name": "历史安装当天首次建联按安装日期计老",
+      "passed": true
+    },
+    {
+      "name": "昨日安装昨日建联今日再次建联计老",
+      "passed": true
+    },
+    {
+      "name": "保留广告位多选且按选中广告位过滤事件",
+      "passed": true
+    },
+    {
+      "name": "广告位不选按全部统计而非空数据",
+      "passed": true
+    },
+    {
+      "name": "原趋势区域保留并可切换图例",
+      "passed": true
+    },
+    {
+      "name": "原粒度入口保留并说明日报变更范围",
+      "passed": true
+    },
+    {
+      "name": "B包日期倒置保留输入并阻止查询",
+      "passed": true
+    },
+    {
+      "name": "B包日期必填校验有效",
+      "passed": true
+    },
+    {
+      "name": "B包日期重置恢复八天日报",
+      "passed": true
+    },
+    {
+      "name": "B包失败时不展示旧数据伪装成功",
+      "passed": true
+    },
+    {
+      "name": "B包失败重试恢复原完整数据",
+      "passed": true
+    },
+    {
+      "name": "B包无记录与零值区分显示",
+      "passed": true
+    },
+    {
+      "name": "有记录零事件日显示零而非空态",
+      "passed": true
+    },
+    {
+      "name": "应用拉活保留原安装付费人数及金额",
+      "passed": true
+    },
+    {
+      "name": "应用拉活的建联指标标为不适用",
+      "passed": true
+    },
+    {
+      "name": "应用拉活报表完整十四列没有对齐缺失",
+      "passed": true
+    },
+    {
+      "name": "加载时可关闭B报表避免旧请求干扰",
+      "passed": true
+    },
+    {
+      "name": "补回的应用筛选实际按关联白包过滤",
+      "passed": true
+    },
+    {
+      "name": "原名称包名搜索仍支持按包名查询",
+      "passed": true
+    },
+    {
+      "name": "原状态禁用筛选保留且支持无结果",
+      "passed": true
+    },
+    {
+      "name": "素材保留原广告类型出价状态编辑删除及预览",
+      "passed": true
+    },
+    {
+      "name": "素材地址和国家明确继承B包未重新独立配置",
+      "passed": true
+    },
+    {
+      "name": "素材原上传删除出价控件保留且移除独立国家输入",
+      "passed": true
+    },
+    {
+      "name": "R-001规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-002规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-003规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-004规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-005规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-006规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-007规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-008规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-009规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-010规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-011规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-012规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-013规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-014规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-015规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-016规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-017规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-018规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-019规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "R-020规则反向定位有效",
+      "passed": true
+    },
+    {
+      "name": "建联规则标记可反向关联右侧口径",
+      "passed": true
+    },
+    {
+      "name": "二十条规则无重复ID无孤立编号且页面不溢出",
+      "passed": true
+    },
+    {
+      "name": "查询过程中可切换到正确B包而不沿用旧归属",
+      "passed": true
+    },
+    {
+      "name": "旧B包异步查询不会覆盖新B包报表",
+      "passed": true
+    },
+    {
+      "name": "开发可从原型直接打开字段对照交接说明",
+      "passed": true
+    },
+    {
+      "name": "审阅放大模式可完整查看新增TG宽表",
+      "passed": true
+    },
+    {
+      "name": "规则点击自动恢复双栏审阅及关联",
+      "passed": true
+    }
+  ]
+}

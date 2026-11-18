@@ -1,0 +1,248 @@
+{
+  "date": "2026-11-18",
+  "version": "v3",
+  "method": "Browser UI interactions with DOM read-back; includes regression after async-close repair",
+  "passed": 60,
+  "checks": [
+    {
+      "name": "v3版本标识已更新",
+      "passed": true
+    },
+    {
+      "name": "白包列表移除展示和点击列",
+      "passed": true
+    },
+    {
+      "name": "每个白包一行且均有可用白包数据入口",
+      "passed": true
+    },
+    {
+      "name": "白包保留TG指标并将日活明确为今日日活",
+      "passed": true
+    },
+    {
+      "name": "明细标明当前白包名称及包名",
+      "passed": true
+    },
+    {
+      "name": "明细只展示日期新安装和日活三个字段",
+      "passed": true
+    },
+    {
+      "name": "默认范围包含起止日期并每日一行",
+      "passed": true
+    },
+    {
+      "name": "区间新安装汇总等于每日之和",
+      "passed": true
+    },
+    {
+      "name": "日活按天展示且不以日均值替代",
+      "passed": true
+    },
+    {
+      "name": "日期口径标明平台时区及首尾包含",
+      "passed": true
+    },
+    {
+      "name": "改日期未查询时保留上次结果并提示待查询",
+      "passed": true
+    },
+    {
+      "name": "查询中显示加载并禁用日期及重复提交",
+      "passed": true
+    },
+    {
+      "name": "范围查询只返回所选三天并正确汇总",
+      "passed": true
+    },
+    {
+      "name": "起止同一天可查询且人数准确",
+      "passed": true
+    },
+    {
+      "name": "扩大范围重新计算全部有记录日期及汇总",
+      "passed": true
+    },
+    {
+      "name": "开始晚于结束时校验且保留输入与上次结果",
+      "passed": true
+    },
+    {
+      "name": "开始日期必填并显示字段错误",
+      "passed": true
+    },
+    {
+      "name": "结束日期缺失不发起查询且保留输入",
+      "passed": true
+    },
+    {
+      "name": "日期重置恢复默认范围并清除校验",
+      "passed": true
+    },
+    {
+      "name": "查询失败反馈明确且不以旧值或广告数据替代",
+      "passed": true
+    },
+    {
+      "name": "失败可重试且恢复准确数据",
+      "passed": true
+    },
+    {
+      "name": "无记录范围展示空状态且不伪造零值",
+      "passed": true
+    },
+    {
+      "name": "关闭明细返回列表且TG最新状态不随日期变化",
+      "passed": true
+    },
+    {
+      "name": "有记录的零用户白包显示每日零值而非空状态",
+      "passed": true
+    },
+    {
+      "name": "不同白包打开自身独立数据且日期不串用",
+      "passed": true
+    },
+    {
+      "name": "白包今日日活与其当天明细一致",
+      "passed": true
+    },
+    {
+      "name": "查询中可立即关闭且不被完成刷新打断",
+      "passed": true
+    },
+    {
+      "name": "关闭后确实打开所选的另一个白包",
+      "passed": true
+    },
+    {
+      "name": "切换白包不会被旧请求覆盖",
+      "passed": true
+    },
+    {
+      "name": "查询支持键盘触发",
+      "passed": true
+    },
+    {
+      "name": "局部刷新后仍能正确展示查询失败",
+      "passed": true
+    },
+    {
+      "name": "局部刷新后失败重试恢复所选区间",
+      "passed": true
+    },
+    {
+      "name": "局部刷新后日期校验继续保留正确反馈",
+      "passed": true
+    },
+    {
+      "name": "局部刷新后重置准确恢复默认数据",
+      "passed": true
+    },
+    {
+      "name": "明细关闭按钮支持键盘操作",
+      "passed": true
+    },
+    {
+      "name": "停用白包也能查看自身历史数据",
+      "passed": true
+    },
+    {
+      "name": "详情右上角关闭可返回列表",
+      "passed": true
+    },
+    {
+      "name": "白包列调整未移除B包的展示点击数据",
+      "passed": true
+    },
+    {
+      "name": "B包国家多选与两组地址保持v2配置",
+      "passed": true
+    },
+    {
+      "name": "素材继续继承B包国家和地址配置",
+      "passed": true
+    },
+    {
+      "name": "新增白包明细不改变客服分配与Adjust触发",
+      "passed": true
+    },
+    {
+      "name": "移除两列后表头单元格与列宽定义一致",
+      "passed": true
+    },
+    {
+      "name": "R-001反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-002反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-003反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-004反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-005反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-006反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-007反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-008反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-009反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-010反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-011反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-012反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-013反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-014反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-015反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "R-016反向定位正确页面及组件",
+      "passed": true
+    },
+    {
+      "name": "每日数据标记可定位右侧对应规则",
+      "passed": true
+    },
+    {
+      "name": "十六条规则编号唯一且全部标记有目标",
+      "passed": true
+    }
+  ]
+}

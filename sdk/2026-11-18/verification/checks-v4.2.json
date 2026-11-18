@@ -1,0 +1,128 @@
+{
+  "date": "2026-11-18",
+  "version": "v4.2",
+  "method": "Actual browser UI, DOM read-back and screenshots. Prototype-only checks; not real SDK/API integration tests.",
+  "passed": 30,
+  "checks": [
+    {
+      "name": "兼容入口打开旧版且点击前不可点击",
+      "passed": true
+    },
+    {
+      "name": "历史素材返回原地址",
+      "passed": true
+    },
+    {
+      "name": "旧版历史点击使用下发地址",
+      "passed": true
+    },
+    {
+      "name": "TG机器人新素材取已安装组",
+      "passed": true
+    },
+    {
+      "name": "其他类型新素材也取已安装组",
+      "passed": true
+    },
+    {
+      "name": "点击已下发素材不重新取值",
+      "passed": true
+    },
+    {
+      "name": "每次下发的新素材地址都来自已安装组",
+      "passed": true
+    },
+    {
+      "name": "兼容地址空仍下发素材",
+      "passed": true
+    },
+    {
+      "name": "兼容空地址点击不跳转",
+      "passed": true
+    },
+    {
+      "name": "应用拉活旧版新素材取唯一地址",
+      "passed": true
+    },
+    {
+      "name": "应用拉活无地址也继续下发",
+      "passed": true
+    },
+    {
+      "name": "修改B包不覆盖历史素材原地址",
+      "passed": true
+    },
+    {
+      "name": "旧版新素材使用B包最新已保存地址",
+      "passed": true
+    },
+    {
+      "name": "新版未知TG走未安装组并触发条件事件",
+      "passed": true
+    },
+    {
+      "name": "新版已安装TG用新地址但不报wa",
+      "passed": true
+    },
+    {
+      "name": "新版失败不兜底历史地址",
+      "passed": true
+    },
+    {
+      "name": "旧版演示明确原接口保持字段兼容",
+      "passed": true
+    },
+    {
+      "name": "新版结果标明v2通道",
+      "passed": true
+    },
+    {
+      "name": "新版v2仍触发正确未安装条件事件",
+      "passed": true
+    },
+    {
+      "name": "v2请求失败无旧地址回退",
+      "passed": true
+    },
+    {
+      "name": "新规则卡片反向定位兼容标记",
+      "passed": true
+    },
+    {
+      "name": "兼容标记定位规则卡片",
+      "passed": true
+    },
+    {
+      "name": "兼容更新保留B包单层六列表头及数值",
+      "passed": true
+    },
+    {
+      "name": "应用拉活安装付费人均字段仍保留",
+      "passed": true
+    },
+    {
+      "name": "白包日活新增和TG完整且数值不变",
+      "passed": true
+    },
+    {
+      "name": "旧版结果明确原接口通道",
+      "passed": true
+    },
+    {
+      "name": "PRD更新到v4.2且38项验收完整",
+      "passed": true
+    },
+    {
+      "name": "PRD明确v2和原接口及禁止回退",
+      "passed": true
+    },
+    {
+      "name": "PRD无断链外部依赖或页面横向溢出",
+      "passed": true
+    },
+    {
+      "name": "PRD目录定位兼容章节",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "date": "2026-11-18",
+  "version": "v4.1",
+  "method": "Browser UI interactions, DOM read-back and screenshots; focused regression for user reference correction. Previous v4 checks archived separately.",
+  "passed": 22,
+  "checks": [
+    {
+      "name": "按参考图使用一行表头不再分两层",
+      "passed": true
+    },
+    {
+      "name": "三个合并表头文案与参考一致",
+      "passed": true
+    },
+    {
+      "name": "每行展示和点击以斜杠合并两个数值",
+      "passed": true
+    },
+    {
+      "name": "建联以总新老顺序合并三个数值",
+      "passed": true
+    },
+    {
+      "name": "B包报表已移除白包活跃人数列及单元格",
+      "passed": true
+    },
+    {
+      "name": "客服表头和每行完整匹配六列",
+      "passed": true
+    },
+    {
+      "name": "其他既有广告位与人均展示字段保留",
+      "passed": true
+    },
+    {
+      "name": "展示与点击去重计数未被格式调整改变",
+      "passed": true
+    },
+    {
+      "name": "人均展示保持原计算值",
+      "passed": true
+    },
+    {
+      "name": "客服报表加载行按六列正确跨列",
+      "passed": true
+    },
+    {
+      "name": "零事件日按参考格式显示0/0和0/0/0",
+      "passed": true
+    },
+    {
+      "name": "失败提示保留正确合并后跨列数",
+      "passed": true
+    },
+    {
+      "name": "失败重试后仍保持斜杠格式",
+      "passed": true
+    },
+    {
+      "name": "无数据状态无错位且保留单层表头",
+      "passed": true
+    },
+    {
+      "name": "广告位筛选保留合并格式且按筛选更新",
+      "passed": true
+    },
+    {
+      "name": "应用拉活单行九列且数据列一致",
+      "passed": true
+    },
+    {
+      "name": "应用拉活保留安装付费与人均展示",
+      "passed": true
+    },
+    {
+      "name": "应用拉活建联显示不适用且移除白包活跃",
+      "passed": true
+    },
+    {
+      "name": "白包明细保留日活新安装及TG三项",
+      "passed": true
+    },
+    {
+      "name": "白包当日演示值保持2新增4日活与TG1比1",
+      "passed": true
+    },
+    {
+      "name": "最终截图组合指标完整且原人均值不变",
+      "passed": true
+    },
+    {
+      "name": "页面无警告和脚本错误",
+      "passed": true
+    }
+  ]
+}

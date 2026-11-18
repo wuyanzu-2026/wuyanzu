@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark">
+  <title>TG 安装统计与统一跳转分配 · 交互原型</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="review-header">
+    <div class="review-title"><span class="review-mark">P</span><strong>TG 安装统计与统一跳转分配</strong><span class="version">v4</span></div>
+    <div class="review-actions"><span class="demo-indicator"><i></i>交互原型 · 全部为演示数据</span><button id="reset-demo" class="text-button">重置演示</button><a class="plan-link" href="./plan.md" target="_blank" rel="noopener">需求计划 ↗</a></div>
+  </header>
+  <div class="review-workspace">
+    <section class="product-stage" aria-label="后台交互原型">
+      <aside class="sidebar">
+        <div class="brand"><span class="brand-icon"><svg viewBox="0 0 28 28" aria-hidden="true"><path d="m14 5 9 5-9 5-9-5 9-5Zm-9 9 9 5 9-5M5 18l9 5 9-5"/></svg></span>AdControl</div>
+        <nav aria-label="后台导航" id="main-nav"></nav>
+        <div class="sidebar-bottom"><span class="environment-dot"></span>测试环境<span class="android-label">Android</span></div>
+      </aside>
+      <div class="product-main">
+        <header class="app-header"><div class="breadcrumb"><span class="menu-icon">☰</span><span id="breadcrumb-text">白包 APP</span></div><div class="account"><span class="account-tag">全部投放</span><span class="avatar">D</span><span>演示账户</span><span class="chevron">⌄</span></div></header>
+        <main id="page-content" tabindex="-1"></main>
+        <footer class="product-footer">AdControl · 产品交互演示<span>仅模拟页面与分配行为，不连接测试后台</span></footer>
+      </div>
+      <div id="modal-root"></div>
+      <div id="toast" role="status" aria-live="polite"></div>
+    </section>
+    <aside class="annotation-panel" aria-label="规则与演示">
+      <header class="annotation-heading"><span class="eyebrow">REVIEW NOTES</span><h1>规则与交互说明</h1><p>点击页面编号，查看对应规则；点击规则卡片，反向定位页面。</p></header>
+      <div class="annotation-tabs" role="tablist" aria-label="审阅内容"><button id="rules-tab" role="tab" aria-selected="true" aria-controls="rules-panel">规则标注 <span>20</span></button><button id="simulation-tab" role="tab" aria-selected="false" aria-controls="simulation-panel">分流演示</button></div>
+      <div id="rules-panel" class="annotation-scroll" role="tabpanel" aria-labelledby="rules-tab"></div>
+      <div id="simulation-panel" class="annotation-scroll" role="tabpanel" aria-labelledby="simulation-tab" hidden></div>
+      <footer class="annotation-footer"><span class="keyboard-key">↵</span> 支持键盘操作 · 数据仅在本次页面内保存</footer>
+    </aside>
+  </div>
+  <script src="./app.js"></script>
+  <script src="./reports.js"></script>
+  <script src="./fidelity.js"></script>
+</body>
+</html>
