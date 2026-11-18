@@ -1,0 +1,26 @@
+const fs=require('node:fs');const path=require('node:path');const root=__dirname;
+const read=f=>fs.readFileSync(path.join(root,f),'utf8');const write=(f,s)=>fs.writeFileSync(path.join(root,f),s,'utf8');
+let plan=read('plan.md').replace('- 状态：待确认（v4.3 需求理解已确认，待明确执行）','- 状态：已批准');
+plan=plan.replace('用户已确认 v4.3 机器人分配统计需求理解，当前计划待明确“执行”。现有原型、PRD 和交接包仍为 v4.2。','用户于 2026-11-18 明确回复“执行”，批准 v4.3 机器人分配统计计划，本轮同步原型、PRD 与交接材料。');
+plan=plan.replace('v4.3 为新增机器人统计业务口径，当前只更新计划，收到明确“执行”后再同步原型、PRD 和新版交接包。','v4.3 新增机器人统计口径已获用户明确“执行”批准，本轮更新原型、PRD 与新版交接包并验证。');write('plan.md',plan);
+let index=read('index.html').replaceAll('v4.2','v4.3').replace('<script src="./compatibility.js"></script>','<script src="./compatibility.js"></script>\n  <script src="./robot-statistics.js"></script>');write('index.html',index);
+write('styles.css',read('styles.css')+'\n/* v4.3: robot successful assignment counts / TG identities. */\n.cs-ad-table{min-width:1030px}.ad-daily-table th[data-rule-anchor="R-025"]{min-width:215px}.robot-assignment-value{color:#80d5c1!important}.robot-statistics-note{line-height:1.85}\n');
+const robotContent=plan.split('### 5.10 TG 机器人实际分配客服统计【本次更新 · v4.3】')[1].split('## 6. 原型交付与验证')[0].trim();
+let map=read('字段对照与开发交接.md');map+='\n\n## 9. v4.3 机器人分配统计【本次更新】\n\n'+robotContent+'\n\n最终客服报表七列：日期、广告位、展示次数/展示人数、点击次数/点击人数、机器人分配次数/分配人数、建联总/新/老、人均展示次数。应用拉活不新增该列，仍九列。机器人成功记录按现有报表筛选范围关联；原广告位来源需开发核对，不用 SDK 点击数据推算实际分配记录。\n';write('字段对照与开发交接.md',map);
+let usage=read('使用说明.md').replace('· v4.2 开发审阅原型','· v4.3 开发审阅原型').replace('`compatibility.js`、`plan.md`','`compatibility.js`、`robot-statistics.js`、`plan.md`').replace('共 24 条规则','共 25 条规则');
+usage+='\n\n## v4.3 机器人分配统计\n\n1. B包管理 → 客服建联 · 演示 B → 广告数据：TG 机器人类型新增“机器人分配次数/分配人数”，在建联总/新/老前，默认最新日为 5/3；原建联顺序保持。\n2. 展开“机器人分配成功与 TG ID 去重记录”，可见相同演示 TG ID 多次成功、失败不计的例子。次数累计实际成功，人数按同 B 包同日 TG ID 去重。相同 ID 跨天重新统计；原有 SDK 指标不替代这个数据源。\n3. 查询 2026-11-08，机器人有日报但无成功分配时为 0/0；查询无记录范围则仍显示暂无数据。\n4. 切换客服建联 · 演示 A（其他）显示“—（不适用）”；切换应用拉活 · 演示不新增此列，安装、付费、人均展示保留。\n5. 新增 R-025，支持双向定位。日期、原广告位筛选、加载、失败重试及现有字段继续保留；真实机器人记录、B 包/TG ID/广告位关联需开发接入联调。\n';write('使用说明.md',usage);
+let builder=read('build-prd.cjs');
+// Update current-document badges, retaining earlier screenshots and change history.
+builder=builder.replaceAll('v4.2','v4.3').replaceAll('compatibility-v4.3.jpg','compatibility-v4.2.jpg');
+builder=builder.replace('已批准计划的 38 条验收项','已批准计划的 44 条验收项');
+builder=builder.replace('机器人分配统计需求','机器人分配统计需求');
+builder=builder.replace('| 客服建联（6 列） | 日期；广告位；展示次数/展示人数；点击次数/点击人数；建联总/新/老；人均展示次数 |','| 客服建联（7 列） | 日期；广告位；展示次数/展示人数；点击次数/点击人数；机器人分配次数/分配人数；建联总/新/老；人均展示次数 |');
+builder=builder.replace('| 建联总/新/老 | 4/1/3 |','| 机器人分配次数/分配人数（仅客服建联） | 5/3 | TG 机器人无成功为 0/0；其他类型 —（不适用） |\n| 建联总/新/老 | 4/1/3 |');
+builder=builder.replace(".split('## 6. 原型交付与验证')[0];\nsections.splice", ".split('### 5.10 TG 机器人实际分配客服统计')[0].split('## 6. 原型交付与验证')[0];\nsections.splice");
+builder=builder.replace("const plan=read('plan.md');", "const robotStatsContent=read('plan.md').split('### 5.10 TG 机器人实际分配客服统计【本次更新 · v4.3】')[1].split('## 6. 原型交付与验证')[0];\nconst reportSection=sections.find(s=>s[0]==='reports');reportSection[3]+='\\n\\n### 7.4 机器人实际成功分配统计【本次更新 · v4.3】\\n\\n'+robotStatsContent;\nconst plan=read('plan.md');");
+builder=builder.replace("['b-report-v4.1.jpg','B 包客服建联报表：单层表头、组合数值及保留人均展示。']", "['robot-report-v4.3.jpg','客服建联机器人报表：成功分配次数/TG ID 按日去重人数，在建联总/新/老前。']");
+builder=builder.replace('**【本次更新 · v4.3】** 明确新版走 v2','**【本次更新 · v4.3】** 客服建联新增机器人分配次数/分配人数；统计实际成功分配客服，人数按同 B 包、同日、同 TG ID 去重。列位置及完整规则见第 07 节。\n\n**【保留 · v4.2】** 明确新版走 v2');
+builder=builder.replace("['compatibility','08','旧版兼容与 v2 接口隔离','**【本次更新 · v4.3】**", "['compatibility','08','旧版兼容与 v2 接口隔离','**【保留 · v4.2】**");
+builder=builder.replace('v4.3 兼容演示：原接口下发新素材','v4.2 兼容演示：原接口下发新素材');
+write('build-prd.cjs',builder);
+console.log('Updated approved v4.3 plan, module entry, field map and PRD generator');

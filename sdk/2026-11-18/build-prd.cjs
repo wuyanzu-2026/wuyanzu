@@ -30,12 +30,12 @@ function markdown(source) {
 }
 const sections = [
 ['overview','01','交付基线与需求范围',`
-本文件面向后台前端、服务端、Android SDK 和测试人员，汇总本次已确认需求及 v4.2 原型修订。需求来源为用户逐轮确认、现有测试后台字段核对及同目录 plan.md 和字段对照与开发交接.md。
+本文件面向后台前端、服务端、Android SDK 和测试人员，汇总本次已确认需求及 v4.3 原型修订。需求来源为用户逐轮确认、现有测试后台字段核对及同目录 plan.md 和字段对照与开发交接.md。
 
 | 项目 | 约定 |
 |---|---|
 | 需求名称 | TG 安装统计与 B 包统一跳转分配 |
-| 需求版本 / 日期 | v4.2 / 2026-11-18 |
+| 需求版本 / 日期 | v4.3 / 2026-11-18 |
 | 当前状态 | 已确认需求的开发交接整理；本文件不新增业务范围 |
 | 管理端 / 客户端 | 现有桌面 Web 后台 / Android；不涉及 iOS |
 | 平台时区 | 印度时间 UTC+5:30；自然日及日期范围首尾均按此时区处理 |
@@ -43,7 +43,7 @@ const sections = [
 | 数据身份 | 沿用现有 SDK 安装用户身份与去重，不以 App 内账号注册作为安装统计条件 |
 | 实施基线 | 未明确删除、迁移或修改的字段、接口、权限、校验和生产逻辑继续保留 |
 
-**目标**：白包独立查看安装、日活和 TG 分布；B 包统一维护国家与跳转地址，素材继承；B 包广告数据区分次数、人数及建联新老。
+**目标**：白包独立查看安装、日活和 TG 分布；B 包统一维护国家与跳转地址，素材继承；B 包广告数据区分展示/点击次数与人数、机器人成功分配次数与 TG ID 人数，以及建联新老。
 
 | 模块 | 本次交付 |
 |---|---|
@@ -51,12 +51,14 @@ const sections = [
 | B 包编辑 | 国家多选；应用拉活唯一地址；客服建联两种地址类型与两组地址 |
 | 素材 | 移除独立国家和跳转配置，继承所属 B 包 |
 | Android / 服务端 | 最近一次打开检测 TG、按 B 包分配地址、异常静默和条件事件上报 |
-| B 包广告报表 | 展示次数/人数、点击次数/人数、建联总/新/老，单层表头合并数值 |
+| B 包广告报表 | 展示次数/人数、点击次数/人数、客服建联的机器人分配次数/人数、建联总/新/老，单层表头合并数值 |
 
 不增加全局 TG 汇总、独立 TG 历史趋势图、地址权重、轮询、地址有效性检测及新权限体系。原国家匹配、广告频次、素材选择、出价、安装/付费和真实建联触发条件沿用原系统。
 `],
 ['changes','02','最终变更与字段保留原则',`
-**【本次更新 · v4.2】** 明确新版走 v2、旧版走原接口：历史素材保留原地址，新素材下发时生成兼容字段，空地址仍下发。详情见第 08 节。
+**【本次更新 · v4.3】** 客服建联新增机器人分配次数/分配人数；统计实际成功分配客服，人数按同 B 包、同日、同 TG ID 去重。列位置及完整规则见第 07 节。
+
+**【保留 · v4.2】** 明确新版走 v2、旧版走原接口：历史素材保留原地址，新素材下发时生成兼容字段，空地址仍下发。详情见第 08 节。
 
 **【保留 · v4.1】** B 包报表三个指标使用单层表头和斜杠组合数值；B 包广告数据去掉白包活跃人数，各白包日活去对应白包数据查看。人均展示次数及原计算继续保留。
 
@@ -194,13 +196,14 @@ B包管理 → 当前行原“广告数据”，在原详情上扩展，保留 B
 
 | 报表 | 按顺序完整表头 |
 |---|---|
-| 客服建联（6 列） | 日期；广告位；展示次数/展示人数；点击次数/点击人数；建联总/新/老；人均展示次数 |
+| 客服建联（7 列） | 日期；广告位；展示次数/展示人数；点击次数/点击人数；机器人分配次数/分配人数；建联总/新/老；人均展示次数 |
 | 应用拉活（9 列） | 日期；广告位；安装；展示次数/展示人数；点击次数/点击人数；建联总/新/老；付费金额；付费人数（总/老/新）；人均展示次数 |
 
 | 字段 | 示例 | 零值 / 不适用 |
 |---|---|---|
 | 展示次数/展示人数 | 12/4 | 0/0 |
 | 点击次数/点击人数 | 4/3 | 0/0 |
+| 机器人分配次数/分配人数（仅客服建联） | 5/3 | TG 机器人无成功为 0/0；其他类型 —（不适用） |
 | 建联总/新/老 | 4/1/3 | 客服有记录零值 0/0/0；应用拉活 —/—/— |
 
 去掉 B 包报表的白包活跃人数展示列；白包自身日活在白包数据查看。**人均展示次数继续保留原计算及底层分母**，不能因隐藏活跃列删除它。安装、付费金额和付费人数（总/老/新）也继续沿用原生产口径；付费新老不得套用本次建联新老规则。
@@ -261,27 +264,29 @@ B包管理 → 当前行原“广告数据”，在原详情上扩展，保留 B
 **技术实施需核对**：同一 B 包已有素材地址或国家不一致时，本文不授权自动选取某一素材、并集合并国家或批量覆盖。发布前应形成按 B 包核对的最终配置清单，按已确认配置规则落地；不要以隐式迁移改动投放范围。新字段接口名、数据库结构、随机算法和发布顺序由开发基于现有工程确定，本文件不伪造接口契约。
 
 ### 9.2 交付与真实性
-本文需求版本与原型 v4.2 一致。原型全部为演示数据，已做界面回归；并不代表服务端、Android 或 Adjust 的真实链路已实现。开发仍需完成真实检测、分配、事件和统计联调。
+本文需求版本与原型 v4.3 一致。原型全部为演示数据，已做界面回归；并不代表服务端、Android 或 Adjust 的真实链路已实现。开发仍需完成真实检测、分配、事件和统计联调。
 
 原型中的金额、安装或其他示例为 0 不代表取消该指标。原型常用国家选项不是生产国家字典的完整范围。
 `]
 ];
-const compatibilityContent=read('plan.md').split('### 5.8 新旧 SDK 与历史素材兼容【本次更新】')[1].split('## 6. 原型交付与验证')[0];
-sections.splice(sections.findIndex(s=>s[0]==='states'),0,['compatibility','08','旧版兼容与 v2 接口隔离','**【本次更新 · v4.2】** 新版调用 v2 获取新配置与点击分配；旧版保留原接口返回素材字段。响应和处理逻辑隔离，后台只维护一套 B 包配置。\n\n'+compatibilityContent]);
+const compatibilityContent=read('plan.md').split('### 5.8 新旧 SDK 与历史素材兼容【本次更新】')[1].split('### 5.10 TG 机器人实际分配客服统计')[0].split('## 6. 原型交付与验证')[0];
+sections.splice(sections.findIndex(s=>s[0]==='states'),0,['compatibility','08','旧版兼容与 v2 接口隔离','**【保留 · v4.2】** 新版调用 v2 获取新配置与点击分配；旧版保留原接口返回素材字段。响应和处理逻辑隔离，后台只维护一套 B 包配置。\n\n'+compatibilityContent]);
+const robotStatsContent=read('plan.md').split('### 5.10 TG 机器人实际分配客服统计【本次更新 · v4.3】')[1].split('## 6. 原型交付与验证')[0];
+const reportSection=sections.find(s=>s[0]==='reports');reportSection[3]+='\n\n### 7.4 机器人实际成功分配统计【本次更新 · v4.3】\n\n'+robotStatsContent;
 const plan=read('plan.md');
 const acceptance=plan.split('## 7. 验收标准')[1];
 if(!acceptance) throw Error('未找到已批准验收标准');
-sections.push(['acceptance','11','验收清单','以下保留已批准计划的 38 条验收项。第 9、12 条中的分流演示、左右规则与审阅说明属于原型交付验收，不要求生产后台新增审阅功能；真实 SDK、服务端和 Adjust 链路以其余业务条件完成联调验收。\n\n'+acceptance]);
+sections.push(['acceptance','11','验收清单','以下保留已批准计划的 44 条验收项。第 9、12 条中的分流演示、左右规则与审阅说明属于原型交付验收，不要求生产后台新增审阅功能；真实 SDK、服务端和 Adjust 链路以其余业务条件完成联调验收。\n\n'+acceptance]);
 sections.push(['fields','A','附录：现有后台完整字段对照',read('字段对照与开发交接.md')]);
-const screenshots=[['compatibility-v4.2.jpg','v4.2 兼容演示：原接口下发新素材，读取已安装 TG 地址组，重复点击复用已下发地址。'],['b-report-v4.1.jpg','B 包客服建联报表：单层表头、组合数值及保留人均展示。'],['live-report-v4.1.jpg','应用拉活报表：原安装、付费字段保留。'],['white-data-v4.1.jpg','白包自身数据：按日新安装、日活与当日新增用户 TG 分布。']];
+const screenshots=[['compatibility-v4.2.jpg','v4.2 兼容演示：原接口下发新素材，读取已安装 TG 地址组，重复点击复用已下发地址。'],['robot-report-v4.3.jpg','客服建联机器人报表：成功分配次数/TG ID 按日去重人数，在建联总/新/老前。'],['live-report-v4.1.jpg','应用拉活报表：原安装、付费字段保留。'],['white-data-v4.1.jpg','白包自身数据：按日新安装、日活与当日新增用户 TG 分布。']];
 const media=screenshots.map(([name,caption])=>`<figure><img alt="${esc(caption)}" src="data:image/jpeg;base64,${fs.readFileSync(path.join(root,'verification',name)).toString('base64')}" loading="lazy"><figcaption>${esc(caption)}截图为演示，正式开发以本文字段及规则为准。</figcaption></figure>`).join('');
 const nav=sections.map(([id,num,title])=>`<a href="#${id}"><span>${num}</span>${esc(title)}</a>`).join('')+'<a href="#screens"><span>B</span>原型参考截图</a>';
 const body=sections.map(([id,num,title,content])=>`<section id="${id}" aria-labelledby="title-${id}"><div class="eyebrow">${num} / REQUIREMENTS</div><h2 id="title-${id}">${esc(title)}</h2>${markdown(content)}</section>`).join('');
 const html=`<!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="TG安装统计与B包统一跳转分配 v4.2 开发交接PRD"><title>开发交接 PRD · TG 安装统计与 B 包统一跳转分配</title>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="TG安装统计与B包统一跳转分配 v4.3 开发交接PRD"><title>开发交接 PRD · TG 安装统计与 B 包统一跳转分配</title>
 <style>
 :root{color-scheme:light;--ink:#17263c;--muted:#58677b;--line:#dce4ec;--accent:#245ac6;--light:#f3f6fa}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:#eef2f7;color:var(--ink);font:15px/1.85 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif}a{color:var(--accent)}.layout{max-width:1540px;margin:auto;display:grid;grid-template-columns:266px minmax(0,1fr);gap:30px;padding:28px 30px 70px}.sidebar{position:sticky;top:28px;align-self:start;max-height:calc(100vh - 56px);overflow:auto;padding:20px 5px 20px 0}.brand{font-size:12px;letter-spacing:2px;color:var(--accent);font-weight:750}.sidebar h2{font-size:19px;margin:5px 0 8px}.sidebar p{color:var(--muted);font-size:12px}.sidebar nav{display:grid;margin-top:24px;gap:5px}.sidebar nav a{display:flex;gap:9px;line-height:1.5;color:#3e5068;font-size:13px;text-decoration:none;border-radius:6px;padding:9px 7px}.sidebar nav a:hover,.sidebar nav a:focus-visible{background:#e1e9f6;color:#184596}.sidebar nav span{flex:0 0 23px;font-size:11px;font-weight:750;color:#6782aa}main{min-width:0}.hero,section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:34px 38px;margin-bottom:20px}.hero{border-top:5px solid var(--accent);padding-top:30px}.eyebrow{font-size:11px;font-weight:750;letter-spacing:1.5px;color:#5074a7}h1{font-size:30px;line-height:1.4;margin:12px 0 14px;letter-spacing:-.5px}h2{font-size:23px;line-height:1.45;margin:8px 0 22px}h3{font-size:18px;margin:28px 0 12px}h4{font-size:16px;margin:24px 0 10px}p{margin:12px 0}li{margin:7px 0;padding-left:3px}ul,ol{padding-left:24px;margin:14px 0}.subtitle{color:var(--muted);max-width:750px}.meta{display:flex;gap:9px;flex-wrap:wrap;margin:22px 0}.tag{font-size:12px;background:#eef3fc;border:1px solid #d7e2f5;border-radius:5px;padding:3px 10px;color:#315993}.callout{border-left:3px solid var(--accent);background:#f4f7fd;padding:12px 17px;font-size:14px;margin-top:22px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin:21px 0 4px}.button,button{appearance:none;border:1px solid #bdcde4;border-radius:6px;background:#fff;color:#2455a1;padding:8px 13px;text-decoration:none;font:inherit;font-size:13px;cursor:pointer}button:hover,.button:hover{background:#eef4fc}.table-wrap{width:100%;overflow:auto;border:1px solid var(--line);border-radius:7px;margin:18px 0 22px}table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.75}th{background:#edf2f8;color:#324d70;text-align:left;font-weight:650}th,td{border-bottom:1px solid var(--line);padding:11px 13px;vertical-align:top;min-width:95px}tr:last-child td{border-bottom:0}tbody tr:nth-child(even){background:#fafbfd}code{padding:2px 5px;background:#edf2f7;border-radius:4px;font:12px/1.6 Consolas,monospace;color:#244e8a;overflow-wrap:anywhere}strong{font-weight:700;color:#163f77}figure{margin:24px 0 32px}figure img{display:block;width:100%;height:auto;border:1px solid #cbd5e2;border-radius:7px}figcaption{font-size:12px;color:var(--muted);padding:10px 2px}.footer{padding:10px 25px;color:var(--muted);font-size:12px;text-align:center}:focus-visible{outline:2px solid #5086df;outline-offset:3px}@media(max-width:1000px){.layout{grid-template-columns:210px minmax(0,1fr);padding:20px;gap:18px}.hero,section{padding:26px 24px}h1{font-size:26px}}@media(max-width:720px){.layout{display:block;padding:12px}.sidebar{position:static;max-height:none;padding:12px}.sidebar nav{grid-template-columns:1fr 1fr;margin-top:10px}.hero,section{padding:22px 17px}.hero h1{font-size:24px}h2{font-size:21px}}@media print{@page{size:A4;margin:15mm}body{background:#fff;font-size:10pt;line-height:1.65}.layout{display:block;padding:0;max-width:none}.sidebar,.actions{display:none}.hero,section{border:0;border-radius:0;padding:0;margin:0 0 22pt;break-before:page}.hero{break-before:auto;border-top:3pt solid #245ac6;padding-top:14pt}h1{font-size:23pt}h2{font-size:17pt}h3,h4{break-after:avoid}p,li{orphans:3;widows:3}.table-wrap{overflow:visible;border-radius:0}table{font-size:9pt}th,td{min-width:0;padding:6pt;overflow-wrap:anywhere}thead{display:table-header-group}tr{break-inside:avoid}figure{break-inside:avoid}a{text-decoration:none}figure img{max-height:230mm;object-fit:contain}.footer{font-size:8pt}.tag{font-size:9pt}}
-</style></head><body><div class="layout"><aside class="sidebar"><div class="brand">PRODUCT REQUIREMENTS</div><h2>开发交接文档</h2><p>v4.2 · 2026-11-18<br>按最终确认需求汇总</p><nav aria-label="文档目录">${nav}</nav></aside><main><header class="hero"><div class="eyebrow">ADCONTROL / ANDROID / DATA</div><h1>TG 安装统计与<br>B 包统一跳转分配</h1><p class="subtitle">开发交接 PRD。覆盖后台页面、字段继承、Android 分流、Adjust 条件上报、数据统计及完整验收。</p><div class="meta"><span class="tag">版本 v4.2</span><span class="tag">需求已确认</span><span class="tag">Android + Web 后台</span><span class="tag">2026-11-18</span></div><div class="callout"><strong>实施原则：</strong>以现有测试后台为增量基线。除明确删除或迁移项，原字段及生产逻辑均保留。本文附录完整收录字段对照，不以简化原型代替字段清单。</div><div class="actions"><button type="button" onclick="window.print()">打印 / 另存 PDF</button><a class="button" href="./index.html">查看同目录原型</a><a class="button" href="#acceptance">跳转验收清单</a></div></header>${body}<section id="screens"><div class="eyebrow">B / PROTOTYPE REFERENCE</div><h2>原型参考截图</h2><p>截图已嵌入本 HTML，离线查看无需额外图片文件。交互原型为同目录 index.html；本文为完整可独立阅读的需求文档。</p>${media}</section><footer class="footer">TG 安装统计与 B 包统一跳转分配 · PRD v4.2 · 2026-11-18<br>需求依据：已确认会话、plan.md、字段对照与开发交接.md。演示不代表真实业务链路已接入。</footer></main></div></body></html>`;
+</style></head><body><div class="layout"><aside class="sidebar"><div class="brand">PRODUCT REQUIREMENTS</div><h2>开发交接文档</h2><p>v4.3 · 2026-11-18<br>按最终确认需求汇总</p><nav aria-label="文档目录">${nav}</nav></aside><main><header class="hero"><div class="eyebrow">ADCONTROL / ANDROID / DATA</div><h1>TG 安装统计与<br>B 包统一跳转分配</h1><p class="subtitle">开发交接 PRD。覆盖后台页面、字段继承、Android 分流、Adjust 条件上报、数据统计及完整验收。</p><div class="meta"><span class="tag">版本 v4.3</span><span class="tag">需求已确认</span><span class="tag">Android + Web 后台</span><span class="tag">2026-11-18</span></div><div class="callout"><strong>实施原则：</strong>以现有测试后台为增量基线。除明确删除或迁移项，原字段及生产逻辑均保留。本文附录完整收录字段对照，不以简化原型代替字段清单。</div><div class="actions"><button type="button" onclick="window.print()">打印 / 另存 PDF</button><a class="button" href="./index.html">查看同目录原型</a><a class="button" href="#acceptance">跳转验收清单</a></div></header>${body}<section id="screens"><div class="eyebrow">B / PROTOTYPE REFERENCE</div><h2>原型参考截图</h2><p>截图已嵌入本 HTML，离线查看无需额外图片文件。交互原型为同目录 index.html；本文为完整可独立阅读的需求文档。</p>${media}</section><footer class="footer">TG 安装统计与 B 包统一跳转分配 · PRD v4.3 · 2026-11-18<br>需求依据：已确认会话、plan.md、字段对照与开发交接.md。演示不代表真实业务链路已接入。</footer></main></div></body></html>`;
 const dest=path.join(root,'prd.html');
 fs.writeFileSync(dest,html,'utf8');
 console.log(JSON.stringify({file:dest,bytes:Buffer.byteLength(html),sections:sections.length+1,acceptanceItems:(acceptance.match(/^\d+\. /gm)||[]).length,embeddedImages:screenshots.length}));

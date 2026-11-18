@@ -115,3 +115,6 @@
 
 /* v4.2 compatibility review additions only. */
 .compatibility-notice{margin-top:18px;align-items:flex-start}.compatibility-notice p{font-size:11px;line-height:1.8;margin:7px 0}.compatibility-markers{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.compatibility-client{padding:0 0 16px;border-bottom:1px solid #354257;margin-bottom:18px}.compatibility-note{font-size:11px;line-height:1.85;color:#a7b5cb;padding:12px;background:#202c40;border:1px solid #354257;border-radius:6px}.sim-result dd{overflow-wrap:anywhere}
+
+/* v4.3: robot successful assignment counts / TG identities. */
+.cs-ad-table{min-width:1030px}.ad-daily-table th[data-rule-anchor="R-025"]{min-width:215px}.robot-assignment-value{color:#80d5c1!important}.robot-statistics-note{line-height:1.85}

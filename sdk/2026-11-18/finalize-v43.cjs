@@ -1,0 +1,10 @@
+const fs=require('node:fs');const path=require('node:path');const root=__dirname;
+const read=f=>fs.readFileSync(path.join(root,f),'utf8');const write=(f,s)=>fs.writeFileSync(path.join(root,f),s,'utf8');
+let builder=read('build-prd.cjs');
+builder=builder.replace('| B 包广告报表 | 展示次数/人数、点击次数/人数、建联总/新/老，单层表头合并数值 |','| B 包广告报表 | 展示次数/人数、点击次数/人数、客服建联的机器人分配次数/人数、建联总/新/老，单层表头合并数值 |');
+builder=builder.replace('B 包广告数据区分次数、人数及建联新老。','B 包广告数据区分展示/点击次数与人数、机器人成功分配次数与 TG ID 人数，以及建联新老。');
+write('build-prd.cjs',builder);
+let map=read('字段对照与开发交接.md');
+map=map.replace('如 12/4、4/3、4/1/3；建联按安装日期判新老','如 12/4、4/3、4/1/3；v4.3 在建联前增加机器人分配次数/分配人数，客服共七列，机器人类型如 5/3，其他类型为不适用；建联按安装日期判新老');
+write('字段对照与开发交接.md',map);
+console.log('Synchronized overview and original report field mapping');
