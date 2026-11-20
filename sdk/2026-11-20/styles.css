@@ -11,3 +11,6 @@
 /* Checkbox dimensions must not inherit full-width form input sizing. */
 .form-checks .checkbox-label{font-size:11px;white-space:nowrap;gap:7px}
 .form-checks input[type=checkbox]{width:14px;height:14px;min-height:0;flex:0 0 14px;padding:0;margin:0}
+
+/* v1.2 来源白包组合筛选 */
+.data-filters .source-app-field{flex:1 1 280px;min-width:220px;max-width:100%;padding:9px;border:1px solid #527da8;border-radius:5px;background:#223954}.source-app-field select{width:100%;text-overflow:ellipsis}.applied-filter-note{font-size:10px;line-height:1.9;color:#9bb3d0;margin:-3px 0 14px;overflow-wrap:anywhere}.applied-filter-note strong{display:inline-block;color:#e6b66d;margin-left:8px}.data-filter-actions{margin-left:auto}

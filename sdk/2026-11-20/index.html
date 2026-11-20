@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark light">
-  <title>AdControl · B包广告数据统计 v1.1</title>
+  <title>AdControl · B包广告数据统计 v1.2</title>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="baseline.css">
   <script src="scope.js" defer></script>
@@ -13,7 +13,7 @@
 </head>
 <body>
   <header class="review-toolbar">
-    <div class="review-identity"><span class="review-symbol">A</span><div><strong>AdControl <span class="review-divider">/</span> B包广告数据统计</strong><span class="review-subtitle">独立统计需求 · v1.1 · 2026-11-20</span></div><span class="prototype-label">模拟数据</span></div>
+    <div class="review-identity"><span class="review-symbol">A</span><div><strong>AdControl <span class="review-divider">/</span> B包广告数据统计</strong><span class="review-subtitle">独立统计需求 · v1.2 · 2026-11-20</span></div><span class="prototype-label">模拟数据</span></div>
     <div class="review-tools"><button class="review-button" data-action="wide-canvas" type="button">全宽查看</button><label for="demo-scenario">演示场景</label><select id="demo-scenario" aria-label="演示场景"><option value="normal">正常流程</option><option value="restricted">指定投放账户 · 无创建权限</option><option value="data-error">数据加载失败</option><option value="data-empty">数据为空</option></select><button id="reset-demo" class="review-button" type="button">重置演示</button><a class="review-link" href="prd.html" target="_blank" rel="noopener">开发 PRD ↗</a><a class="review-link" href="plan.md" target="_blank" rel="noopener">需求计划 ↗</a></div>
   </header>
   <div class="review-layout">
@@ -22,7 +22,7 @@
       <div class="workspace"><header class="app-header"><div id="breadcrumb"></div><div class="account"><span class="scope-tag" id="scope-tag">全部投放</span><span class="avatar">运</span><span>演示运营</span></div></header><main id="page-content" tabindex="-1"></main></div>
       <div id="modal-root"></div><div id="toast-root" aria-live="polite" aria-atomic="true"></div>
     </section>
-    <aside class="rules-pane" aria-label="业务规则与交互标注"><header class="rules-header"><div><span class="eyebrow">REVIEW NOTES</span><h2>规则标注 <span id="rule-count"></span></h2></div><span class="linked-label">⇄ 双向联动</span></header><div class="change-legend" data-anchor="R-029"><span class="legend-existing">● 现有功能 · 低亮</span><span class="legend-new">● 新增 / 调整 · 高亮</span><p>变更页面保留现有功能并低亮；未改动页面仅保留导航，不展开。</p></div><p class="rules-intro">点击页面上的编号查看规则；点击规则卡片定位到对应页面或弹窗。</p><label class="rule-search"><span>⌕</span><input id="rule-search" type="search" placeholder="搜索规则或编号" aria-label="搜索规则"></label><div class="rule-view-tabs"><button data-rule-view="page" class="selected">当前页面</button><button data-rule-view="all">全部规则</button></div><div id="rule-list"></div><footer class="rules-footer">统计原型 v1.1 · 2026-11-20<span>从原 v5.3 拆出 · 不调用真实业务接口</span></footer></aside>
+    <aside class="rules-pane" aria-label="业务规则与交互标注"><header class="rules-header"><div><span class="eyebrow">REVIEW NOTES</span><h2>规则标注 <span id="rule-count"></span></h2></div><span class="linked-label">⇄ 双向联动</span></header><div class="change-legend" data-anchor="R-029"><span class="legend-existing">● 现有功能 · 低亮</span><span class="legend-new">● 新增 / 调整 · 高亮</span><p>变更页面保留现有功能并低亮；未改动页面仅保留导航，不展开。</p></div><p class="rules-intro">点击页面上的编号查看规则；点击规则卡片定位到对应页面或弹窗。</p><label class="rule-search"><span>⌕</span><input id="rule-search" type="search" placeholder="搜索规则或编号" aria-label="搜索规则"></label><div class="rule-view-tabs"><button data-rule-view="page" class="selected">当前页面</button><button data-rule-view="all">全部规则</button></div><div id="rule-list"></div><footer class="rules-footer">统计原型 v1.2 · 2026-11-20<span>从原 v5.3 拆出 · 不调用真实业务接口</span></footer></aside>
   </div>
 </body>
 </html>
