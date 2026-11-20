@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-20",
+  "method": "Node VM 执行实际原型表单渲染和业务函数，DOM 桩替代浏览器；未进行浏览器视觉验收",
+  "results": [
+    {
+      "name": "其他类型显示两个客服组下拉，无地址输入",
+      "passed": true
+    },
+    {
+      "name": "任一状态缺失或失效组时阻止保存",
+      "passed": true
+    },
+    {
+      "name": "不同组保存及重新编辑回显",
+      "passed": true
+    },
+    {
+      "name": "两个状态的组均受引用保护",
+      "passed": true
+    },
+    {
+      "name": "同组保存且引用按投放去重",
+      "passed": true
+    },
+    {
+      "name": "克隆保留两个绑定且默认停用",
+      "passed": true
+    },
+    {
+      "name": "TG机器人原绑定规则保留",
+      "passed": true
+    }
+  ]
+}

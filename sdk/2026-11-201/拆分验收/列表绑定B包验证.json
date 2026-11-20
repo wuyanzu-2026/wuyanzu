@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-20",
+  "method": "Node VM 执行实际列表渲染与业务函数；未进行浏览器视觉验收",
+  "results": [
+    {
+      "name": "机器人入口和路由可进入",
+      "passed": true
+    },
+    {
+      "name": "客服组展示绑定名称、ID、状态与用途",
+      "passed": true
+    },
+    {
+      "name": "机器人列表实际渲染绑定明细",
+      "passed": true
+    },
+    {
+      "name": "同包双状态同组去重且显示两种用途",
+      "passed": true
+    },
+    {
+      "name": "修改机器人绑定后列表同步更新",
+      "passed": true
+    },
+    {
+      "name": "克隆后绑定数量增加且显示停用副本",
+      "passed": true
+    },
+    {
+      "name": "无绑定显示明确空态及名称转义",
+      "passed": true
+    }
+  ]
+}
