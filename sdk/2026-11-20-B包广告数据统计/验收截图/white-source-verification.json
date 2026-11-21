@@ -1,0 +1,74 @@
+{
+  "date": "2026-11-20",
+  "scope": "v1.2 来源白包筛选逻辑校验（Node VM，非浏览器验收）",
+  "checks": [
+    "默认全部白包及24人样例",
+    "当前绑定与已解绑历史白包选项",
+    "单白包同时限定B包与来源",
+    "未知来源仅纳入全部",
+    "跨白包用户整体去重",
+    "日期/TG/安装/广告位组合",
+    "空结果及零人数",
+    "其他B包隔离与克隆无历史",
+    "切包恢复全部并忽略旧请求",
+    "快速重复查询仅应用最新响应",
+    "重置恢复全部白包",
+    "无效来源阻止提交",
+    "失败保留白包并支持重试"
+  ],
+  "metrics": {
+    "all": {
+      "show": 476,
+      "showUsers": 24,
+      "click": 123,
+      "clickUsers": 16,
+      "assign": 55,
+      "assignUsers": 8,
+      "connect": 4,
+      "connectNew": 3,
+      "connectOld": 1,
+      "installs": 0,
+      "revenue": 0
+    },
+    "source13": {
+      "show": 237,
+      "showUsers": 18,
+      "click": 59,
+      "clickUsers": 12,
+      "assign": 25,
+      "assignUsers": 6,
+      "connect": 4,
+      "connectNew": 3,
+      "connectOld": 1,
+      "installs": 0,
+      "revenue": 0
+    },
+    "source14": {
+      "show": 99,
+      "showUsers": 18,
+      "click": 25,
+      "clickUsers": 11,
+      "assign": 12,
+      "assignUsers": 6,
+      "connect": 4,
+      "connectNew": 3,
+      "connectOld": 1,
+      "installs": 0,
+      "revenue": 0
+    },
+    "unbound15": {
+      "show": 68,
+      "showUsers": 3,
+      "click": 18,
+      "clickUsers": 2,
+      "assign": 9,
+      "assignUsers": 1,
+      "connect": 0,
+      "connectNew": 0,
+      "connectOld": 0,
+      "installs": 0,
+      "revenue": 0
+    }
+  },
+  "browserVerification": "未完成：内置浏览器禁止 file: URL，未绕过限制"
+}
