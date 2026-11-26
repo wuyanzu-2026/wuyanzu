@@ -13,7 +13,7 @@
 </head>
 <body class="admin-review">
   <header class="review-bar">
-    <div><span class="review-mark">原型审阅</span><strong>B 包展示策略</strong><span class="subtle">v4 · 模拟数据</span></div>
+    <div><span class="review-mark">原型审阅</span><strong>B 包展示策略</strong><span class="subtle">v5 · 模拟数据</span></div>
     <a href="prd.html" target="_blank" rel="noopener">查看需求文档 ↗</a>
   </header>
   <div class="review-layout">
@@ -119,9 +119,10 @@
                 <label>暂停 <input data-guard="days" type="number" min="1"> 天，到期清零并重新分发</label>
               </div>
               <fieldset id="guard-channels"><legend>未点击限制适用渠道</legend><label><input type="checkbox" data-channel="游戏"> 游戏</label> <label><input type="checkbox" data-channel="客服建联"> 客服建联</label></fieldset>
-              <h3>没有安装 TG 的用户 <button type="button" class="rule-mark" data-rule="R-012">R-012</button></h3>
-              <label>客服建联广告间隔变为原来的 <input data-guard="tgMultiplier" type="number" min="1" step="0.1"> 倍</label>
-              <p class="subtle">与未点击降频取更大倍数，不相乘。冷却优先；点击清零后仍保留未安装 TG 的限制。</p>
+              <h3>客服广告跳 TG，但用户没装 TG <button type="button" class="rule-mark" data-rule="R-012">R-012</button></h3>
+              <label>符合这个条件时，展示间隔变为原来的 <input data-guard="tgMultiplier" type="number" min="1" step="0.1"> 倍</label>
+              <p class="subtle">配置在当前白包的当前广告位。只对本次实际跳转 Telegram 且确认未安装 TG 的客服广告生效；其他链接不用这条限制，无需单独设置。倍数填 1 表示不额外降频。</p>
+              <p class="subtle">与未点击降频取更大倍数，不相乘，冷却优先。点击清零或冷却结束后仍按实际链接重新判断。</p>
               <p class="subtle">B 包冷却后优先分发其他可用 B 包；没有可用的再出 TopOn广告。新增 B 包独立分发，换素材不解除冷却。</p>
             </section>
             <section class="simulation" id="simulation">
@@ -133,7 +134,8 @@
               <div class="preview-summary" id="preview-summary" role="status"></div>
               <details class="preview-options">
                 <summary>更多预览选项</summary>
-                <p>模拟同一个用户。B1、B3 为游戏，B2 为客服建联。下方每次展示默认未点击。</p>
+                <p>模拟同一个用户。B1、B3 为游戏，B2 为客服建联。可切换 B2 本次跳转目标。下方每次展示默认未点击。</p>
+                <label>B2 本次实际跳转 <select id="tg-target"><option value="telegram">Telegram 链接</option><option value="other">其他链接</option></select></label>
                 <label><input id="tg-installed" type="checkbox" checked> 用户已安装 TG</label>
                 <div class="guard-simulator"><select id="guard-package" aria-label="选择模拟 B 包"></select><button type="button" id="simulate-click">模拟点击该 B 包</button><button type="button" id="advance-days">快进冷却天数</button><button type="button" id="change-material">更换素材</button></div>
                 <div id="guard-state" role="status"></div>

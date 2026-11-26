@@ -1,78 +1,137 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>B 包展示策略 · 需求文档</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>B包展示策略 · 开发PRD v5</title>
+  <link rel="stylesheet" href="prd.css">
   <script src="rules.js"></script>
 </head>
 <body>
-  <header class="review-bar"><div><span class="review-mark">需求文档</span><strong>B 包展示策略</strong><span class="subtle">已批准 v4 · 2026-11-26</span></div><a href="index.html">打开交互原型 ↗</a></header>
-  <main class="prd">
-    <section class="panel">
-      <h1>白包广告位的 B 包展示策略</h1>
-      <p>一个 B 包可以关联多个白包。运营需要在桌面后台对每个白包的各广告位设置不同的 B 包展示分配。</p>
+<div class="layout">
+  <aside class="toc">
+    <div class="eyebrow">DEVELOPER HANDOFF</div><div class="brand">AdControl / PRD</div>
+    <h2>展示策略 · 目录</h2>
+    <nav aria-label="PRD章节导航">
+      <a href="#release">01 · 范围与本次更新</a>
+      <a href="#journey">02 · 页面流程与现有保留</a>
+      <a href="#schedule">03 · 前后两段展示配置</a>
+      <a href="#guard">04 · 未点击降频与冷却</a>
+      <a href="#telegram">05 · 按实际链接应用 TG 限制</a>
+      <a href="#states">06 · 校验、权限与异常</a>
+      <a href="#rules">07 · 原型规则对照</a>
+      <a href="#acceptance">08 · 验收清单</a>
+      <a href="#delivery">09 · 开发分工与交付文件</a>
+    </nav>
+    <div class="links"><a href="index.html">查看交互原型 ↗</a><a href="plan.md">需求计划</a></div>
+    <div class="foot">2026-11-26<br>可离线阅读与打印<br>原型使用模拟数据</div>
+  </aside>
+  <main class="content">
+    <header class="document-header">
+      <div class="eyebrow">展示策略 · PRD / 计划 v5</div>
+      <h1>B包展示策略<small>白包广告位配置、分发与用户兴趣限制</small></h1>
+      <p class="lead">在一个白包内灵活分发多个 B 包：先安排用户刚开始看到的内容，再设置后续展示间隔与选包方式，并按未点击、冷却及实际跳转链接控制频率。</p>
+      <div class="meta"><span class="pill">开发交付稿</span><span class="pill">v5 已批准</span><span class="pill neutral">更新 2026-11-26</span><span class="pill neutral">后台 / 服务端 / SDK / QA</span></div>
+      <div class="actions"><a href="index.html">打开交互原型</a><a href="plan.md">查看 plan.md</a><button type="button" onclick="window.print()">打印 / 另存 PDF</button></div>
+      <p class="print-note">本文为开发需求；静态原型不代表真实服务端、SDK 或线上功能已经实现。</p>
+    </header>
+    <aside class="callout update"><strong>【本次更新】TG 降频按实际链接判断</strong><p>客服建联不再统一视为跳 Telegram。配置仍在白包的各广告位；仅本次实际跳转 Telegram 且确认未安装 TG 时应用此限制。其他链接不应用，未点击与冷却规则保持独立。</p></aside>
+    <section class="document-section" id="release">
+      <h2>01 · 范围与本次更新</h2>
+      <div class="table-wrap"><table><thead><tr><th>分类</th><th>内容</th><th>边界</th></tr></thead><tbody>
+        <tr><td>现有保留</td><td>后台基础配置、权限、白包列表及编辑入口</td><td>灰色仅表示原型不演示；开发不删除原功能。</td></tr>
+        <tr><td>修改</td><td>白包各广告位的前后段展示配置与策略查看</td><td>同一 B 包在不同白包可采用不同配置。</td></tr>
+        <tr><td>新增</td><td>未点击降频、冷却、素材轮换与服务端可调参数</td><td>按用户、白包、广告位、B包分别累计。</td></tr>
+        <tr><td>本次修改</td><td>TG 限制从客服类型改为实际跳转链接判断</td><td>不迁移配置位置，不新增 B 包级配置表单。</td></tr>
+        <tr><td>不在本次</td><td>广告数据统计改版、真实接口和 SDK 实现</td><td>参考文档只作为 PRD 结构和排版参考，不引入其统计需求。</td></tr>
+      </tbody></table></div>
     </section>
-    <section class="panel">
-      <h2>范围与操作路径</h2>
-      <p>白包 APP → 编辑弹窗 → 选择广告位 → 配置「刚开始，先出什么」与「看完这些之后，怎么出」→ 预览 → 保存，列表显示两段摘要。</p>
-      <p>运营先配置新用户和后续展示计划，再填写「用户不点击时怎么处理」与「没有安装 TG 的用户」服务端策略。限制优先于原计划。模拟操作在「更多预览选项」内，可查看点击清零、冷却到期和换素材。</p>
-      <ul>
-        <li><strong>现有保留</strong>　关联投放、白包编辑权限、广告位开关和无素材时的TopOn广告回退；沿用后台深色列表和弹窗。</li>
-        <li><strong>修改</strong>　两段配置统一替换旧新用户次数、旧间隔及 v2 自定义优先级规则，不叠加执行。前段按 B 包和连续次数排列；后段统一间隔，再选择等概率随机、按概率分配或固定顺序。</li>
-        <li><strong>修改</strong>　完整广告预览、前后段计数、保存校验和两段策略列表摘要。原型为模拟数据，不提交真实后台。</li>
-      </ul>
+    <section class="document-section" id="journey">
+      <h2>02 · 页面流程与现有保留</h2>
+      <ol class="flow"><li><span>01</span>白包列表查看广告位状态</li><li><span>02</span>点击查看策略，弹窗只读查看已保存配置</li><li><span>03</span>点击编辑，选择开屏、Banner、插屏或激励</li><li><span>04</span>配置前后段、用户限制，预览并保存</li></ol>
+      <div class="table-wrap"><table><thead><tr><th>区域</th><th>交付要求</th></tr></thead><tbody>
+        <tr><td>白包列表</td><td>共16列：ID、LOGO、APP名称、包名、关联投放、广告位状态、展示策略、安装用户、今日日活、已安装 TG、未安装 TG、TG 安装占比、付费、建联、状态、操作。原「怎么出广告」拆成状态和策略两列，其余保留。</td></tr>
+        <tr><td>广告位状态</td><td>四行显示广告位名称及绿色圆形 ✓ / 红色圆形 ×，不重复写开启/关闭。表示广告位开关，不表示用户冷却。</td></tr>
+        <tr><td>展示策略</td><td>只放「查看策略」按钮；弹窗展示当前白包四个广告位的已保存详情，关闭或 Esc 返回，关闭按钮关闭后焦点回到原按钮。修改从原编辑入口进行。</td></tr>
+        <tr><td>筛选和操作</td><td>保留状态筛选、关键词、搜索、新增、分页，以及编辑、白包数据、删除。右侧操作固定。</td></tr>
+        <tr><td>编辑基础字段</td><td>按原顺序保留 APP名称、Logo、包名、AppId、TopOn应用ID、AdjustToken、Adjust鉴权Token、付费事件Key、首充事件Key、注册事件Key、安装事件Key、建联事件Key。</td></tr>
+        <tr><td>编辑其他内容</td><td>保留名称/包名必填、AppId只读、Logo上传和删除、商店地址、状态、四广告位开关、关闭、取消、保存。关闭广告位保留配置，SDK下次拉取生效。</td></tr>
+      </tbody></table></div>
     </section>
-    <section class="panel">
-      <h2>按测试后台交付的页面内容</h2>
-      <p>原「怎么出广告」拆为「广告位状态」「展示策略」两列。状态列四行显示开屏、Banner、插屏、激励的名称和绿色 ✓/红色 ×，不重复显示开启/关闭文字；图标表示广告位开关，不表示冷却。策略列仅放「查看策略」按钮，点击只读弹窗查看已保存的四个广告位详细配置，支持关闭按钮和 Esc，关闭后焦点回到触发按钮；修改仍从原编辑入口进入。</p>
-      <p>以测试后台「白包APP」列表和「编辑白包APP」弹窗为准。原型中的灰色表示本次不演示该操作，开发应保留现有入口、字段和行为。</p>
-      <table>
-        <thead><tr><th>位置</th><th>要求</th></tr></thead>
-        <tbody>
-          <tr><td>白包列表 <a href="#R-009">R-009</a></td><td>保留原有内容，仅拆分广告列，共 16 列：ID、LOGO、APP名称、包名、关联投放、广告位状态、展示策略、安装用户、今日日活、已安装 TG、未安装 TG、TG 安装占比、付费、建联、状态、操作。保留状态筛选、关键词搜索、新增、分页，以及右侧的编辑、白包数据、删除。广告位开关状态与展示策略分列，详情由查看策略弹窗展示。</td></tr>
-          <tr><td>白包编辑 <a href="#R-010">R-010</a></td><td>按原顺序保留 APP名称、Logo、包名、AppId、TopOn应用ID、AdjustToken、Adjust鉴权Token、付费事件Key、首充事件Key、注册事件Key、安装事件Key、建联事件Key。广告区之后保留商店地址、状态、取消、关闭和保存。保留名称及包名必填、AppId 只读、Logo 上传及删除能力。</td></tr>
-          <tr><td>四个位置怎么出广告 <a href="#R-002">R-002</a></td><td>保留开屏、Banner、插屏、激励各自的开关和开关关闭后保留配置的行为。原「新用户先出几次」对应「新用户先看什么」，原「之后每隔几次插一次」对应后段间隔，原示意图对应「逐次预览」。保存后 SDK 下次拉取生效。原型折叠区仅供开发核对旧表单。</td></tr>
-        </tbody>
-      </table>
+    <section class="document-section" id="schedule">
+      <h2>03 · 前后两段展示配置</h2>
+      <h3>新用户先看什么</h3><p>可关闭。开启时至少一行，选择关联 B 包及正整数连续次数；支持增删、上移、下移、重复包。按行顺序执行，指定 B 包成功展示后扣次数。无素材回退 TopOn广告不扣该项次数；冷却项临时跳过以继续其他包。</p>
+      <h3>看完以后，怎么出广告</h3><p>每 N 次成功展示出 1 次 B 包，N 为正整数，前段完成后从零计算。N=1 每次尝试 B 包；N=3 表示 TopOn广告 → TopOn广告 → B包。该间隔适用于以下全部分配方式。</p>
+      <div class="table-wrap"><table><thead><tr><th>方式</th><th>配置</th><th>行为</th></tr></thead><tbody>
+        <tr><td>随机抽一个</td><td>至少勾选一个关联包</td><td>轮到B包时等概率抽取，可连续抽中同包。</td></tr>
+        <tr><td>按百分比抽</td><td>每包0%–100%，最多两位小数，合计100%</td><td>每次按概率抽取；不保证有限次数严格等于比例。</td></tr>
+        <tr><td>按顺序轮流出</td><td>非空序列，可重复、增删和调整顺序</td><td>成功展示当前项后推进，末尾循环；无素材回退不推进，冷却项跳过。</td></tr>
+      </tbody></table></div>
+      <aside class="callout"><strong>只执行一套节奏</strong><p>前段替换旧新用户次数，后段间隔替换旧间隔，逐次预览替换旧示意图。不再叠加 v2 单次/范围优先级规则。预加载及未展示不扣次数，同一机会只抽取一次，重复回调不重复扣减。</p></aside>
     </section>
-    <section class="panel">
-      <h2>功能规则</h2>
-      <div id="prd-rules"></div>
+    <section class="document-section" id="guard">
+      <h2>04 · 未点击降频与冷却</h2>
+      <p>状态按用户 × 白包 × 广告位 × B包独立保存，重启继续。只对成功展示且未点击的自建广告累计；TopOn广告及失败不累计。展示结束、点击窗口关闭后结算，重复事件不重复计数。</p>
+      <div class="table-wrap"><table><thead><tr><th>条件</th><th>默认处理</th><th>恢复或补位</th></tr></thead><tbody>
+        <tr><td>连续5次未点击</td><td>该包间隔×2，轮换其其他素材</td><td>不足有效间隔的位置由TopOn广告填充；单素材时仍用原素材。</td></tr>
+        <tr><td>连续10次未点击</td><td>暂停7天</td><td>优先本广告位已配置的其他可用B包，无候选才出TopOn广告。</td></tr>
+        <tr><td>发生点击</td><td>清零未点击次数，解除未点击降频</td><td>仍需独立检查TG链接限制。</td></tr>
+        <tr><td>冷却到期</td><td>清零并恢复原频率，重新参与原计划</td><td>不保证下一次立即展示该包，不采用一次重测后再次暂停的流程。</td></tr>
+        <tr><td>新增或换素材</td><td>新B包独立参与；旧B包换素材不解除冷却</td><td>不能用更换图片或视频绕过暂停。</td></tr>
+      </tbody></table></div>
+      <p>降频和冷却优先于前后段计划。前段有效间隔基准为1，后段为配置N；有效间隔按基准乘倍数向上取整，按该B包上一次成功展示后的全部广告次数判断。冷却替补在现有候选内选择：随机在剩余项中抽，概率对剩余非零项归一，固定顺序跳过冷却项。素材不可用则单独回退TopOn广告。补位减少空位，不保证收益不下降。</p>
     </section>
-    <section class="panel">
-      <h2>验收标准</h2>
-      <ol>
-        <li>同一个 B 包关联两个白包时，修改一个白包的配置不会影响另一个。四个广告位的模式和参数分别保存。</li>
-        <li>前段 B1 两次、B2 一次；后段每三次出 B 包、固定顺序 B2 → B3。前九次为 B1、B1、B2、TopOn广告、TopOn广告、B2、TopOn广告、TopOn广告、B3。</li>
-        <li>关闭前段后直接执行后段。间隔 1 时每次尝试 B 包，间隔 3 时每三次尝试一次，适用于全部三种分配方式。</li>
-        <li>随机至少勾选一个 B 包；概率须合计 100%，每次按概率抽取，不要求少量结果严格等于概率；固定顺序非空且支持重复。</li>
-        <li>前段开启但为空、未选 B 包、非正整数次数或间隔、空随机候选或空顺序、无效概率都阻止保存，并定位对应配置。</li>
-        <li>前段无素材回退不扣次数，冷却时跳过该项以继续其他包。后段无素材回退成功计入间隔位置，但固定序列不推进；冷却排除的项跳过，避免固定序列停滞。继续模拟保留前后段及各包限制状态。</li>
-        <li>按用户、白包、广告位保存运行状态，重启继续。一次机会只抽取一次，重复回调不重复计数，未展示不消耗次数。</li>
-        <li>保存成功后返回白包列表，对应广告位回显已保存配置。取消编辑后列表保留上次已保存的配置。</li>
-        <li>原型左侧规则编号与右侧标注双向定位，规则编号和内容与本文一致。</li>
-        <li>按测试后台逐项核对白包列表的 16 列和筛选、分页及操作入口，核对编辑弹窗的基础字段、归因字段和底部操作。既有功能按原行为验收。</li>
-        <li>B1连续5次未点击后间隔翻倍并轮换素材，10次后暂停7天；不影响B2或其他广告位。冷却时可用B包接替，无候选才由TopOn广告补位。</li>
-        <li>点击及冷却到期清零恢复；更换素材不提前解除冷却，新增B包独立分发。</li>
-        <li>未安装TG仅降低客服建联广告频次；与未点击倍数取最大值，不相乘；冷却优先。点击后若仍未安装TG，继续保留TG限制。</li>
-        <li>模拟服务端参数可修改和保存；暂停阈值须高于降频阈值，次数和冷却天数为正整数，倍数至少1，渠道名单非空。错误阻止保存并定位。</li>
-      </ol>
+    <section class="document-section" id="telegram">
+      <h2>05 · 按实际链接应用 TG 限制</h2>
+      <aside class="callout update"><strong>配置位置不变：白包 → 广告位</strong><p>每个白包的每个广告位配置一个TG降频倍数，由服务端下发。客服广告也可能跳转非TG链接；不在B包中新增TG降频配置。</p></aside>
+      <div class="table-wrap"><table><thead><tr><th>本次实际目标</th><th>用户TG状态</th><th>TG降频</th></tr></thead><tbody>
+        <tr><td>Telegram</td><td>确认未安装</td><td>应用当前白包当前广告位倍数，默认×2；填1表示不额外降频。</td></tr>
+        <tr><td>Telegram</td><td>已安装</td><td>不应用。</td></tr>
+        <tr><td>其他链接</td><td>未安装或已安装</td><td>均不应用。</td></tr>
+        <tr><td>任意目标</td><td>安装状态未知</td><td>不因无法确认而按未安装降频。</td></tr>
+      </tbody></table></div>
+      <ul><li>同一投放有多个链接时，展示前先确定本次实际目标，再判断。不根据客服类型或存在某个TG链接就一律降频。</li><li>与未点击降频取更大的倍数，不相乘。冷却优先于两种降频。</li><li>点击或到期后重新判断；换成其他链接不解除该B包未点击降频或冷却。</li><li>实际目标类型应沿业务已解析的跳转结果提供，不能简单用链接文本中含“tg”判断。短链或重定向需正确解析为本次目标类型。</li></ul>
     </section>
-    <section class="panel">
-      <h2>执行口径与预览限制</h2>
-      <p>成功展示但未点击才增加连续次数；TopOn广告、预加载、展示失败不计入。未点击需在展示结束、点击窗口关闭后结算，重复回调只处理一次。预览默认每次成功展示均未点击，并提供模拟点击按钮；真实SDK和服务端未接入。</p>
-      <p>间隔翻倍按该B包两次成功展示之间的广告机会数控制：后段基准为原间隔，前段基准为1；不足有效间隔时用TopOn广告补位。TG与未点击取最大倍数并向上取整。冷却状态按服务端时间判定，恢复不保证下一次立即出该包，而是重新参与原计划。</p>
-      <p>冷却后只在当前白包该广告位配置的其他B包中接替；概率模式按剩余非零概率重新归一，随机模式在剩余勾选项中抽取。固定顺序跳过冷却项。素材不可用单独回落TopOn广告，不视为冷却。补位用于减少空展示，不保证收入不下降。</p>
+    <section class="document-section" id="states">
+      <h2>06 · 校验、权限与异常</h2>
+      <div class="table-wrap"><table><thead><tr><th>字段/场景</th><th>要求</th></tr></thead><tbody>
+        <tr><td>服务端默认参数</td><td>降频5次、暂停10次、未点击倍数2、冷却7天、TG倍数2；渠道名单从现有渠道选。模拟示例的渠道为游戏和客服建联。</td></tr>
+        <tr><td>字段校验</td><td>前段和间隔次数为正整数；前段开启非空且包必选。阈值/天数为正整数，暂停阈值大于降频阈值，倍数≥1，渠道非空。随机/固定非空，概率合计100%。</td></tr>
+        <tr><td>保存</td><td>校验所有广告位；错误定位具体配置，保留输入。成功更新列表及只读详情，取消不保存。</td></tr>
+        <tr><td>权限</td><td>沿用白包编辑及投放授权，服务端校验可配置和可分发范围。</td></tr>
+        <tr><td>预览</td><td>显示12次成功展示，可重新/继续；模拟每次未点击，可指定包模拟点击、快进冷却、更换素材、TG状态及实际链接。不同位运行状态隔离。</td></tr>
+      </tbody></table></div>
     </section>
+    <section class="document-section" id="rules"><h2>07 · 原型规则对照</h2><div id="prd-rules"></div></section>
+    <section class="document-section" id="acceptance">
+      <h2>08 · 验收清单</h2>
+      <div class="table-wrap"><table><thead><tr><th>编号</th><th>场景</th><th>通过标准</th></tr></thead><tbody>
+        <tr><td>SP-A01</td><td>后台保留</td><td>16列及全部筛选/操作和编辑原字段保留，状态图标无重复文字，策略按钮弹窗只读。</td></tr>
+        <tr><td>SP-A02</td><td>两段</td><td>先B1两次、B2一次，后每3次固定B2→B3：前9次为B1、B1、B2、TopOn、TopOn、B2、TopOn、TopOn、B3。</td></tr>
+        <tr><td>SP-A03</td><td>分配与输入</td><td>三种方式遵守间隔，空候选、无效次数、概率合计错误均阻止保存；各位及各白包隔离。</td></tr>
+        <tr><td>SP-A04</td><td>未点击</td><td>第5次后降频并换素材，第10次冷却；不影响其他包和其他广告位。</td></tr>
+        <tr><td>SP-A05</td><td>冷却与回退</td><td>其他可用包接替，无候选TopOn补位；点击和到期清零，换素材不解锁。</td></tr>
+        <tr><td>SP-A06</td><td>TG链接未安装</td><td>确认未安装且本次目标Telegram，使用当前白包广告位倍数。</td></tr>
+        <tr><td>SP-A07</td><td>非TG或已安装</td><td>不应用TG限制，未点击降频仍保留；同一投放切换链接后判断正确。</td></tr>
+        <tr><td>SP-A08</td><td>叠加</td><td>TG×2与未点击×3取3，不取6；冷却阻断展示；点击只清除未点击限制。</td></tr>
+        <tr><td>SP-A09</td><td>未知与目标</td><td>未知不当未安装；多链接/短链按实际解析目标判断。</td></tr>
+        <tr><td>SP-A10</td><td>继续与回调</td><td>重启/继续不丢计数，失败与预加载不扣次数，重复回调只处理一次。</td></tr>
+        <tr><td>SP-A11</td><td>交付</td><td>本地资源可用，规则编号与原型一致，可打印；逻辑检查和视觉复核状态如实记录。</td></tr>
+      </tbody></table></div>
+    </section>
+    <section class="document-section" id="delivery">
+      <h2>09 · 开发分工与交付文件</h2>
+      <ul><li>后台：完整保留既有表单，服务端参数校验，策略详情与预览。</li><li>服务端：配置下发、渠道授权、实际跳转目标类型、冷却时间和状态一致性。</li><li>SDK：成功展示及点击结算、独立计数、TG状态、按本次目标执行限制、重复回调去重和TopOn补位。</li><li>QA：按上述验收清单联调，覆盖多白包、多广告位、多目标与新旧版本。</li></ul>
+      <p>技术评审需明确实际部署版本的配置协议、最低SDK版本、目标类型解析及时间同步方案；本文规定业务结果，不将模拟字段名当正式接口。</p>
+      <p><a href="index.html">交互原型</a> · <a href="plan.md">已批准计划</a> · <a href="verification-v5.json">v5逻辑验证记录</a></p>
+      <p class="print-note">新版浏览器视觉复核尚未完成：本地文件访问受工具策略限制。逻辑验证使用实际策略函数及页面事件处理器，页面使用DOM替身，不能替代真实后台和SDK联调。</p>
+    </section>
+    <footer class="end">AdControl · B包展示策略 · PRD v5 · 2026-11-26 · 本地原型仅用于审阅</footer>
   </main>
-  <script>
-    document.getElementById('prd-rules').innerHTML = displayRules.map(rule =>
-      '<article id="' + rule.id + '">' + ruleMarkup(rule) + '</article>').join('');
-  </script>
+</div>
+<script>
+  document.getElementById('prd-rules').innerHTML = displayRules.map(rule =>
+    '<article id="' + rule.id + '"><h3>' + rule.id + ' · ' + rule.name + '</h3><p><strong>' + rule.kind + '</strong> · ' + rule.applies + '</p><p>' + rule.text + '</p></article>').join('');
+</script>
 </body>
 </html>
-
-
-

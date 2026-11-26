@@ -12,14 +12,14 @@ const DeliveryGuard = {
     return '';
   },
   state() { return { misses: 0, until: 0, lastShown: null, material: 0 }; },
-  status(record, settings, kind, tg, now) {
+  status(record, settings, kind, tg, now, target = 'other') {
     if (record.until && now >= record.until) {
       record.misses = 0; record.until = 0; record.lastShown = null;
     }
     if (record.until > now) return { cooling: true, factor: 1 };
     return { cooling: false, factor: Math.max(
       settings.channels.includes(kind) && record.misses >= Number(settings.lower) ? Number(settings.multiplier) : 1,
-      kind === '客服建联' && !tg ? Number(settings.tgMultiplier) : 1) };
+      kind === '客服建联' && target === 'telegram' && tg === false ? Number(settings.tgMultiplier) : 1) };
   },
   result(record, settings, kind, clicked, now) {
     if (clicked) { record.misses = 0; record.until = 0; record.lastShown = null; return; }
@@ -32,7 +32,7 @@ const DeliveryGuard = {
     return Array.from({ length: size }, () => {
       const state = runtime.delivery, records = runtime.records;
       const get = code => records[code] ||= this.state();
-      const status = code => this.status(get(code), settings, context.kinds[code], context.tg, context.now);
+      const status = code => this.status(get(code), settings, context.kinds[code], context.tg, context.now, context.targets?.[code]);
       let skipped = '';
       while (config.introEnabled && state.introIndex < config.intro.length
         && status(config.intro[state.introIndex].code).cooling) {

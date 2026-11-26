@@ -84,7 +84,8 @@
         + '<dt>未点击处理</dt><dd>' + escape(guard.lower) + ' 次：间隔×' + escape(guard.multiplier) + '，轮换素材；'
         + escape(guard.stop) + ' 次：暂停 ' + escape(guard.days) + ' 天。点击或到期清零恢复。</dd>'
         + '<dt>适用渠道</dt><dd>' + escape(guard.channels.join('、')) + '</dd>'
-        + '<dt>未安装 TG</dt><dd>客服建联间隔×' + escape(guard.tgMultiplier) + '，与未点击降频取更大倍数，不相乘。</dd>'
+        + '<dt>TG 链接限制</dt><dd>仅本次客服广告实际跳转 Telegram 且确认未安装 TG 时，间隔×' + escape(guard.tgMultiplier)
+        + '；其他链接或已安装 TG 时不应用。与未点击降频取更大倍数，不相乘。配置属于当前白包、当前广告位。</dd>'
         + '<dt>冷却补位</dt><dd>优先其他可用 B 包，没有可用的再展示 TopOn广告。</dd></dl></section>';
     }).join('');
     $('strategy-dialog').showModal();
@@ -152,6 +153,7 @@
       + '<label class="retained-switch"><input type="checkbox" role="switch" aria-label="' + name + '自有广告开关" checked disabled> 开启</label>')
       .map(row => '<div class="slot-overview-item">' + row + '</div>').join('');
     $('unavailable').checked = false;
+    $('tg-target').value = 'telegram';
     renderSettings();
   }
   function options(selected = '') {
@@ -228,7 +230,7 @@
       ? '轮到 B 包时：' + (config.sequence.join(' → ') || '请添加 B 包') + '，按这个顺序循环。'
       : config.mode === 'random' ? '轮到 B 包时：从 ' + (config.candidates.join('、') || '待勾选的 B 包') + ' 中随机抽一个。'
       : '轮到 B 包时：' + app().links.map(code => code + ' 被抽中的概率 ' + (config.shares[code] || '？') + '%').join('；') + '。';
-    $('operator-after').textContent += ' 达到未点击阈值或未安装 TG 时，还会降频；冷却的 B 包会让给其他可用 B 包。';
+    $('operator-after').textContent += ' 未点击达到阈值时会降频；客服广告本次跳 TG 且未安装时也会降频。冷却的 B 包让给其他可用 B 包。';
     $('run').disabled = Boolean(issue);
     $('continue-preview').disabled = Boolean(issue);
     $('sequence').hidden = Boolean(issue);
@@ -248,7 +250,8 @@
     }
     if (advance || !previewRows[slotIndex].length) previewRows[slotIndex] =
       DeliveryGuard.preview(config, previewStates[slotIndex], config.guard, {
-        kinds, tg: $('tg-installed').checked, now: previewStates[slotIndex].now, unavailable: $('unavailable').checked
+        kinds, targets: { B1: 'other', B2: $('tg-target').value, B3: 'other' },
+        tg: $('tg-installed').checked, now: previewStates[slotIndex].now, unavailable: $('unavailable').checked
       });
     const rows = previewRows[slotIndex];
     $('preview-description').textContent = slots[slotIndex] + ' · 第 ' + rows[0].number + '–' + rows.at(-1).number + ' 次成功展示，包含TopOn广告广告';
@@ -264,8 +267,9 @@
     const runtime = previewStates[slotIndex];
     $('guard-state').innerHTML = app().links.map(code => {
       const record = runtime.records[code] ||= DeliveryGuard.state();
-      const status = DeliveryGuard.status(record, policy().guard, kinds[code], $('tg-installed').checked, runtime.now);
-      return '<div>' + label(code) + ' · ' + kinds[code] + ' · 未点击 ' + record.misses + ' 次 · '
+      const target = code === 'B2' ? $('tg-target').value : 'other';
+      const status = DeliveryGuard.status(record, policy().guard, kinds[code], $('tg-installed').checked, runtime.now, target);
+      return '<div>' + label(code) + ' · ' + kinds[code] + (code === 'B2' ? '（本次跳转' + (target === 'telegram' ? ' Telegram' : '其他链接') + '）' : '') + ' · 未点击 ' + record.misses + ' 次 · '
         + (status.cooling ? '冷却中，剩余 ' + Math.ceil((record.until - runtime.now) / 86400000) + ' 天'
           : status.factor > 1 ? '降频：间隔×' + status.factor : '正常')
         + ' · 素材 ' + (record.material + 1) + '</div>';
@@ -353,7 +357,11 @@
     const node = event.target, data = node.dataset;
     if (data.channel) policy().guard.channels = ['游戏', '客服建联'].filter(value =>
       value === data.channel ? node.checked : policy().guard.channels.includes(value));
-    else if (node.id === 'tg-installed') { renderGuardState(); return; }
+    else if (node.id === 'tg-installed' || node.id === 'tg-target') {
+      renderGuardState();
+      $('preview-description').textContent += '；条件已变更，点“继续”查看后续结果，或重新模拟。';
+      return;
+    }
     else if (node.name === 'mode') {
       clearHighlights(); policy().mode = node.value; renderMode();
     } else if (node.id === 'intro-enabled') {
