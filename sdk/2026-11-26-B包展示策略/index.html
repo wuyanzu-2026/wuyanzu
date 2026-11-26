@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>B 包展示策略 · 原型审阅</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+  <script src="rules.js" defer></script>
+  <script src="policy.js" defer></script>
+  <script src="guard.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="admin-review">
+  <header class="review-bar">
+    <div><span class="review-mark">原型审阅</span><strong>B 包展示策略</strong><span class="subtle">v4 · 模拟数据</span></div>
+    <a href="prd.html" target="_blank" rel="noopener">查看需求文档 ↗</a>
+  </header>
+  <div class="review-layout">
+    <main class="product" aria-label="后台原型">
+      <nav class="nav" id="admin-nav" aria-label="后台导航">
+        <div class="brand"><span aria-hidden="true">◇</span> AdControl</div>
+        <button type="button" disabled>数据概览</button>
+        <button type="button" id="nav-app" aria-current="page">白包 APP</button>
+        <button type="button" disabled>B 包管理</button>
+        <button type="button" disabled>设备管理</button>
+        <button type="button" disabled>Telegram 机器人</button>
+        <button type="button" disabled>其他客服组</button>
+        <button type="button" disabled>经营收益</button>
+        <button type="button" disabled>账户管理</button>
+        <button type="button" disabled>角色管理</button>
+      </nav>
+      <div class="admin-content">
+        <div class="admin-header"><span>☰　白包APP</span><div><span class="scope">全部投放</span><span class="account-avatar">O</span><span>运营账号</span></div></div>
+        <div class="workarea">
+        <div id="toast" class="toast" role="status" hidden></div>
+        <section id="list">
+          <div class="page-head">
+            <h1>白包APP</h1>
+            <button type="button" class="primary" disabled>新增白包APP</button>
+          </div>
+          <div class="panel list-tools">
+            <label>状态 <select aria-label="白包状态" disabled><option>全部</option><option>启用</option><option>禁用</option></select></label>
+            <label>关键词 <input aria-label="名称或包名" placeholder="搜索APP名称/包名" disabled></label>
+            <button type="button" class="primary" disabled>搜索</button>
+          </div>
+          <div class="panel list-panel">
+            <div class="table-wrap">
+              <table class="list-table">
+                <thead><tr><th>ID</th><th>LOGO</th><th>APP名称</th><th>包名</th><th>关联投放</th><th>广告位状态</th><th>展示策略 <button type="button" class="rule-mark" data-rule="R-009">R-009</button></th><th>安装用户</th><th>今日日活</th><th>已安装 TG</th><th>未安装 TG</th><th>TG 安装占比</th><th>付费</th><th>建联</th><th>状态</th><th>操作</th></tr></thead>
+                <tbody id="app-rows"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="pagination"><span id="list-total"></span><select aria-label="每页条数" disabled><option>10条/页</option><option>20条/页</option><option>50条/页</option><option>100条/页</option></select><button type="button" disabled aria-label="上一页">‹</button><button type="button" class="page-number" disabled aria-current="page">1</button><button type="button" disabled aria-label="下一页">›</button></div>
+          <p class="subtle">四个广告位分开设置。可横向滚动查看全部列，操作列固定在右侧。</p>
+          <p class="preserved-note" id="list-baseline">现有保留 · 列表字段、筛选、分页、新增、白包数据和删除均按测试后台交付。灰色控件仅在原型中不可操作。 <button type="button" class="rule-mark" data-rule="R-009">R-009</button></p>
+        </section>
+        </div>
+      </div>
+      <div id="editor-scrim" class="editor-scrim" hidden></div>
+      <form id="editor" class="editor-dialog" role="dialog" aria-labelledby="editor-title" novalidate hidden>
+          <div class="dialog-head">
+            <h2 id="editor-title">编辑白包APP</h2>
+            <button type="button" class="dialog-close" aria-label="关闭编辑" data-back>×</button>
+          </div>
+          <div class="dialog-body" id="dialog-body">
+          <section class="legacy-fields" id="preserved-editor" aria-label="白包原有字段">
+            <p class="preserved-note">现有保留 · 基础资料和归因字段沿用后台原位及原功能。 <button type="button" class="rule-mark" data-rule="R-010">R-010</button></p>
+            <div id="legacy-fields"></div>
+          </section>
+          <section class="panel strategy" id="strategy">
+            <div class="panel-head">
+              <div><h2>四个位置怎么出广告 <span class="change">修改</span> <button type="button" class="rule-mark" data-rule="R-001">R-001</button></h2><p id="editor-context"></p></div>
+            </div>
+            <div class="slot-overview" id="slot-tabs" aria-label="四个广告位及原有开关"></div>
+            <p class="subtle">点广告位名称配置。原有开关继续控制对应广告位。</p>
+            <p class="subtle">关闭开关会保留该广告位配置。保存后，SDK 下次拉取时生效。</p>
+            <details class="baseline-frequency">
+              <summary>查看测试后台原广告区及本次对应关系</summary>
+              <table><thead><tr><th>广告位置</th><th>新用户先出几次</th><th>之后每隔几次插一次</th></tr></thead><tbody id="baseline-frequency"></tbody></table>
+              <p>上表为原字段的模拟值。新用户次数改由「新用户先看什么」配置，原间隔改由「看完以后，怎么出广告」配置。原示意图区更新为「逐次预览」。</p>
+            </details>
+            <div class="operator-result">
+              <h3 id="operator-title">用户会看到什么</h3>
+              <p id="operator-intro"></p>
+              <p id="operator-example"></p>
+              <p id="operator-after"></p>
+            </div>
+            <section class="settings stage-section" id="intro-settings">
+              <div class="stage-head"><h3>新用户先看什么？</h3>
+                <label><input type="checkbox" id="intro-enabled"> 先展示指定的 B 包</label>
+                <button type="button" class="rule-mark" data-rule="R-008">R-008</button>
+              </div>
+              <p id="intro-help" class="subtle">从上到下展示。比如先看 B1 两次，再看 B2 一次。</p>
+              <div id="intro-body"></div>
+            </section>
+            <section class="settings" id="settings">
+              <h3>看完以后，怎么出广告？ <button type="button" class="rule-mark" data-rule="R-002">R-002</button></h3>
+              <label class="interval-control">每 <input id="interval" type="number" min="1" step="1" inputmode="numeric"> 次广告，出 1 次 B 包广告</label>
+              <p class="subtle">例如填 3，先出 2 次TopOn广告，第 3 次出 B 包，然后重复。填 1，每次都优先出 B 包。</p>
+              <h3 class="allocation-heading">轮到 B 包时，选哪个？</h3>
+              <fieldset class="mode-options" id="mode-options">
+                <legend class="sr-only">B 包展示模式</legend>
+                <label><input type="radio" name="mode" value="fixed"> 按顺序轮流出</label>
+                <label><input type="radio" name="mode" value="percent"> 按百分比抽</label>
+                <label><input type="radio" name="mode" value="random"> 随机抽一个</label>
+              </fieldset>
+              <div id="mode-body"></div>
+              <div id="validation" class="error" role="alert" hidden></div>
+            </section>
+            <section id="guard-settings" class="guard-settings">
+              <h3>用户不点击时怎么处理？ <span class="change">新增</span> <button type="button" class="rule-mark" data-rule="R-011">R-011</button></h3>
+              <p class="subtle">服务端配置 · 当前白包、当前广告位 · 以下值可调整。</p>
+              <div class="guard-fields">
+                <label>连续未点击 <input data-guard="lower" type="number" min="1"> 次，开始降频</label>
+                <label>展示间隔变为原来的 <input data-guard="multiplier" type="number" min="1" step="0.1"> 倍，并轮换素材</label>
+                <label>连续未点击 <input data-guard="stop" type="number" min="1"> 次，暂停该 B 包</label>
+                <label>暂停 <input data-guard="days" type="number" min="1"> 天，到期清零并重新分发</label>
+              </div>
+              <fieldset id="guard-channels"><legend>未点击限制适用渠道</legend><label><input type="checkbox" data-channel="游戏"> 游戏</label> <label><input type="checkbox" data-channel="客服建联"> 客服建联</label></fieldset>
+              <h3>没有安装 TG 的用户 <button type="button" class="rule-mark" data-rule="R-012">R-012</button></h3>
+              <label>客服建联广告间隔变为原来的 <input data-guard="tgMultiplier" type="number" min="1" step="0.1"> 倍</label>
+              <p class="subtle">与未点击降频取更大倍数，不相乘。冷却优先；点击清零后仍保留未安装 TG 的限制。</p>
+              <p class="subtle">B 包冷却后优先分发其他可用 B 包；没有可用的再出 TopOn广告。新增 B 包独立分发，换素材不解除冷却。</p>
+            </section>
+            <section class="simulation" id="simulation">
+              <div class="simulation-head">
+                <div><h3>逐次预览 <button type="button" class="rule-mark" data-rule="R-006">R-006</button></h3><p id="preview-description"></p></div>
+                <button type="button" id="run">重新模拟</button>
+              </div>
+              <ol class="sequence" id="sequence" aria-label="模拟展示序列"></ol>
+              <div class="preview-summary" id="preview-summary" role="status"></div>
+              <details class="preview-options">
+                <summary>更多预览选项</summary>
+                <p>模拟同一个用户。B1、B3 为游戏，B2 为客服建联。下方每次展示默认未点击。</p>
+                <label><input id="tg-installed" type="checkbox" checked> 用户已安装 TG</label>
+                <div class="guard-simulator"><select id="guard-package" aria-label="选择模拟 B 包"></select><button type="button" id="simulate-click">模拟点击该 B 包</button><button type="button" id="advance-days">快进冷却天数</button><button type="button" id="change-material">更换素材</button></div>
+                <div id="guard-state" role="status"></div>
+                <div class="fixed-preview-controls">
+                  <button type="button" id="continue-preview">模拟重开 APP，接着看 12 次</button>
+                  <label class="fallback"><input type="checkbox" id="unavailable"> 模拟 B 包素材出不来</label>
+                </div>
+              </details>
+            </section>
+          </section>
+          <section class="legacy-fields" aria-label="其他白包配置">
+            <div><label>商店地址 <input type="url" disabled value="https://example.com/demo"></label><label>状态 <select disabled><option>启用</option><option>禁用</option></select></label></div>
+          </section>
+          </div>
+          <div class="form-actions" id="form-actions">
+            <span>灰色控件代表现有功能，实际后台继续按原方式使用。<button type="button" class="rule-mark" data-rule="R-009">R-009</button></span>
+            <button type="button" data-back>取消</button>
+            <button type="submit" class="primary">保存</button>
+            <button type="button" class="rule-mark" data-rule="R-007">R-007</button>
+          </div>
+      </form>
+      <dialog id="strategy-dialog" aria-labelledby="strategy-dialog-title" class="strategy-dialog">
+        <div class="dialog-head"><h2 id="strategy-dialog-title">展示策略</h2><button type="button" data-close-strategy aria-label="关闭策略详情">×</button></div>
+        <div class="strategy-dialog-body"><p class="subtle">已保存的策略 · 仅查看，修改请使用列表中的「编辑」。</p><div id="strategy-detail"></div></div>
+        <div class="strategy-dialog-footer"><button type="button" data-close-strategy>关闭</button></div>
+      </dialog>
+    </main>
+    <aside class="annotations" aria-label="规则标注">
+      <div class="annotation-head"><h2>规则标注</h2><p>点击编号，可定位对应配置。</p></div>
+      <div id="rule-cards"></div>
+    </aside>
+  </div>
+</body>
+</html>
+
+
